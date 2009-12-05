@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/html/webkit.h>
 #include <ruby.h>
 
 class App : public wxApp
@@ -31,7 +32,7 @@ bool App::OnInit()
     MainFrame *frame = new MainFrame( _("Bowline"), wxPoint(50, 50),
                                   wxSize(450, 350));
     
-    // Add webkit instance to frame
+    wxWebKitCtrl* html = new wxWebKitCtrl(frame, wxID_ANY, _("http://google.com"));
     // Load ruby
     // Expose some webkit methods to Ruby
     // Load init.rb
