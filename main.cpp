@@ -1,11 +1,16 @@
 #include <wx/wx.h>
 #include <wx/html/webkit.h>
 #include <ruby.h>
+#include <iostream>
+
+extern "C" {
+  void Init_prelude(void);
+}
 
 class App : public wxApp
 {
     virtual bool OnInit();
-    virtual void InitRuby();
+    void InitRuby();
 };
 
 IMPLEMENT_APP(App)
@@ -33,6 +38,7 @@ bool App::OnInit()
                                   wxSize(450, 350));
     
     wxWebKitCtrl* html = new wxWebKitCtrl(frame, wxID_ANY, _("http://google.com"));
+    App::InitRuby();
     // Load ruby
     // Expose some webkit methods to Ruby
     // Load init.rb
@@ -49,12 +55,17 @@ void App::InitRuby(){
     ruby_init();
     ruby_script("Embedded Ruby");
     ruby_init_loadpath();
-
-    // ruby_incpush("app_path");
   
     // Since ruby_init_gems is not public
-    // rb_define_module("Gem");
-    // Init_prelude();
+    rb_define_module("Gem");
+    Init_prelude();
+
+    ruby_incpush(wxGetCwd().c_str());
+    
+    rb_require("init");
+
+    // Call this sometime:
+    // ruby_finalize();
 }
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
