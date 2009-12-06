@@ -3,6 +3,8 @@
 #include <ruby.h>
 #include <iostream>
 
+#include "ruby_gvl.cpp"
+
 extern "C" {
   void Init_prelude(void);
 }
@@ -63,6 +65,8 @@ void App::InitRuby(){
     ruby_incpush(wxGetCwd().c_str());
     
     rb_require("init");
+    
+    RubyGVL::Unlock();
 
     // Call this sometime:
     // ruby_finalize();
