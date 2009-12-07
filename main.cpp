@@ -1,5 +1,3 @@
-// Ruby & C++ - http://www.angelfire.com/electronic2/issac/rb_cpp_ext_tut.txt
-
 #include <wx/wx.h>
 #include <ruby.h>
 #include <iostream>
@@ -18,7 +16,6 @@ public:
   virtual bool OnInit();
   virtual int OnExit();
   virtual void InitRuby();
-  static wxString App::RunScript(const wxString& js);
   static MainFrame* frame;
   static BowlineControl* bowline;
   void Idle(wxIdleEvent& evt);
@@ -32,6 +29,7 @@ IMPLEMENT_APP(App)
 
 bool App::OnInit()
 {
+  // Load config file
   // Show splash screen
   // http://docs.wxwidgets.org/stable/wx_wxsplashscreen.html#wxsplashscreen
 
@@ -40,19 +38,17 @@ bool App::OnInit()
   App::frame   = new MainFrame(wxPoint(50, 50), wxSize(450, 350));
   App::bowline = new BowlineControl(App::frame);
 
+  // TODO - move this to BowlineControl, and use Rice
   VALUE rb_mBowline = rb_define_module("Bowline");
   rb_define_module_function(rb_mBowline, "run_script", RUBY_METHOD_FUNC(App_RunScript), 1);
   
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
+  // TODO - move this to BowlineControl
   bowline->Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
-
-  // Rice::define_module("Bowline").define_module_function("execute", &App::RunScript);
 
   rb_require("init");
   
   bowline->LoadURL("file://" + wxGetCwd() + "/index.html");
-
-  // Create event listener for ruby procs that need to be executed in the main thread
 
   App::frame->Show(true);
   SetTopWindow(App::frame);
@@ -67,11 +63,11 @@ int App::OnExit()
 }
 
 extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
-  return(rb_str_new2(App::bowline->RunScript(StringValueCStr(arg)).c_str()));
-}
-
-wxString App::RunScript(const wxString& js){
-  return(App::bowline->RunScript(js));
+  return(
+    rb_str_new2(
+      App::bowline->RunScript(StringValueCStr(arg)).c_str()
+    )
+  );
 }
 
 void App::InitRuby(){
