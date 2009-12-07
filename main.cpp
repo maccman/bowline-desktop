@@ -50,7 +50,7 @@ bool App::OnInit()
 
   rb_require("init");
   
-  bowline->LoadURL("http://google.com");
+  bowline->LoadURL("file://" + wxGetCwd() + "/index.html");
 
   // Create event listener for ruby procs that need to be executed in the main thread
 
@@ -77,7 +77,7 @@ wxString App::RunScript(const wxString& js){
 void App::InitRuby(){
   RUBY_INIT_STACK;
   ruby_init();
-  ruby_script("Embedded Ruby");
+  ruby_script("Bowline");
   ruby_init_loadpath();
 
   // Since ruby_init_gems is not public
