@@ -1,3 +1,7 @@
 This project is to replace Titanium in Bowline.
 
-In development...
+* OSX only (for the moment)
+* uses wxWidgets
+* uses Ruby 1.9
+
+Run rake to compile.

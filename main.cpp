@@ -2,6 +2,10 @@
 #include <ruby.h>
 #include <iostream>
 
+#ifdef __WXMAC__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #include "main_frame.cpp"
 #include "bowline_control.cpp"
 
@@ -39,19 +43,25 @@ bool App::OnInit()
   App::bowline = new BowlineControl(App::frame);
 
   // TODO - move this to BowlineControl, and use Rice
-  VALUE rb_mBowline = rb_define_module("Bowline");
-  rb_define_module_function(rb_mBowline, "run_script", RUBY_METHOD_FUNC(App_RunScript), 1);
+  rb_define_module_function(rb_cKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
   
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
-  // TODO - move this to BowlineControl
-  bowline->Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
+  Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
 
-  rb_require("init");
+  rb_require("script/run");
   
-  bowline->LoadURL("file://" + wxGetCwd() + "/index.html");
+  bowline->LoadURL("file://" + wxGetCwd() + "/public/index.html");
 
   App::frame->Show(true);
   SetTopWindow(App::frame);
+  
+  #ifdef __WXMAC__
+  // Temporary measure to enable interaction
+  ProcessSerialNumber PSN;
+  GetCurrentProcess(&PSN);
+  TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+  SetFrontProcess(&PSN);
+  #endif
   
   return true;
 }
@@ -73,7 +83,7 @@ extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
 void App::InitRuby(){
   RUBY_INIT_STACK;
   ruby_init();
-  ruby_script("Bowline");
+  ruby_script("bowline");
   ruby_init_loadpath();
 
   // Since ruby_init_gems is not public
@@ -84,7 +94,7 @@ void App::InitRuby(){
 }
 
 void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
-  rb_eval_string_protect("Bowline.idle", NULL);
+  rb_eval_string_protect("Bowline::Desktop.idle", NULL);
   // This absolutely sucks. Needed to get threads running.
   // There is a Ruby API to do this properly (see RubyGVL),
   // but it keeps segfaulting on me
@@ -92,5 +102,5 @@ void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
 }
 
 void App::Loaded(wxWebKitBeforeLoadEvent& WXUNUSED(evt)){
-  rb_eval_string_protect("Bowline.loaded", NULL);
+  rb_eval_string_protect("Bowline::Desktop.loaded", NULL);
 }

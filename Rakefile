@@ -1,4 +1,5 @@
 task :default => :build
+desc "Build Bowline"
 task :build do
   opts  = `wx-config --libs`.chomp
   opts  += `wx-config --cxxflags`.chomp
@@ -9,6 +10,7 @@ task :build do
   `g++ main.cpp #{opts} -o main`
 end
 
+desc "Run Bowline"
 task :run do
   exec './main'
 end
