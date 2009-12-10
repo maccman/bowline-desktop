@@ -12,6 +12,7 @@
 extern "C" {
   void Init_prelude(void);
   VALUE App_RunScript(VALUE self, VALUE arg);
+  extern VALUE rb_mKernel;
 }
 
 class App : public wxApp
@@ -33,22 +34,24 @@ IMPLEMENT_APP(App)
 
 bool App::OnInit()
 {
-  // Load config file
-  // Show splash screen
-  // http://docs.wxwidgets.org/stable/wx_wxsplashscreen.html#wxsplashscreen
-
   this->InitRuby();
 
-  App::frame   = new MainFrame(wxPoint(50, 50), wxSize(450, 350));
+  App::frame   = new MainFrame(wxPoint(50, 50), wxSize(800, 600));
   App::bowline = new BowlineControl(App::frame);
 
   // TODO - move this to BowlineControl, and use Rice
-  rb_define_module_function(rb_cKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
+  rb_define_module_function(rb_mKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
   
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
   Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
 
-  rb_require("script/run");
+  int error;
+  rb_load_protect(rb_str_new2("script/init"), Qfalse, &error);
+  if(error){
+    VALUE lasterr = rb_gv_get("$!");
+    VALUE message = rb_obj_as_string(lasterr);
+    std::cout << RSTRING_PTR(message) << std::endl;
+  }
   
   bowline->LoadURL("file://" + wxGetCwd() + "/public/index.html");
 

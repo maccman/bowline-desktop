@@ -5,7 +5,7 @@ Create Windowing API (with Rice):
   Select folder
   Network offline
   Platform.mac? etc
-  Notification???
+  Notification (Growl)???
   Add Menus
   Context Menu?
   Minimize
@@ -13,9 +13,12 @@ Create Windowing API (with Rice):
   Close
   Etc
 
-Bowline-desktop configuration
+Bowline-desktop configuration:
+  Init script
+  HTML script
 
-Copyright text on first run.
+Splash screen: http://docs.wxwidgets.org/stable/wx_wxsplashscreen.html#wxsplashscreen
+
 
 Icons
 
