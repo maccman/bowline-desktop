@@ -1,7 +1,7 @@
 #include "main_frame.h"
 
 MainFrame::MainFrame(wxString &name, const wxSize& size, bool chrome = true)
-    : wxFrame( NULL, -1, name, wxDefaultPosition, size, chrome ? wxDEFAULT_FRAME_STYLE : wxSIMPLE_BORDER)
+    : wxFrame( NULL, -1, name, wxDefaultPosition, size, chrome ? wxDEFAULT_FRAME_STYLE : wxNO_BORDER)
 {
   wxMenuBar *menuBar = new wxMenuBar;
 
