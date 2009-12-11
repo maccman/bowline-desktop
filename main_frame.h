@@ -1,7 +1,7 @@
 class MainFrame : public wxFrame
 {
 public:
-    MainFrame(const wxPoint& pos, const wxSize& size);
+    MainFrame(wxString& name, const wxSize& size);
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
 };

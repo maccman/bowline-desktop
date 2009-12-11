@@ -12,14 +12,6 @@ Create Windowing API (with Rice):
   Maximize
   Close
   Etc
-
-Bowline-desktop configuration:
-  Init script
-  HTML script
-
-Splash screen: http://docs.wxwidgets.org/stable/wx_wxsplashscreen.html#wxsplashscreen
-
-
-Icons
-
-Show error messages after exceptions
+  Icons
+  
+Get copy/past keyboard shortcuts working

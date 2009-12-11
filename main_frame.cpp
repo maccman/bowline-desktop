@@ -1,7 +1,7 @@
 #include "main_frame.h"
 
-MainFrame::MainFrame(const wxPoint& pos, const wxSize& size)
-    : wxFrame( NULL, -1, _("Bowline"), pos, size )
+MainFrame::MainFrame(wxString &name, const wxSize& size)
+    : wxFrame( NULL, -1, name, wxDefaultPosition, size )
 {
     wxMenuBar *menuBar = new wxMenuBar;
 

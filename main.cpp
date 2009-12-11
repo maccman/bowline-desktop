@@ -6,6 +6,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+#include "ruby_utils.cpp"
+#include "bowline_config.cpp"
 #include "main_frame.cpp"
 #include "bowline_control.cpp"
 
@@ -36,24 +38,26 @@ bool App::OnInit()
 {
   this->InitRuby();
 
-  App::frame   = new MainFrame(wxPoint(50, 50), wxSize(800, 600));
-  App::bowline = new BowlineControl(App::frame);
-
   // TODO - move this to BowlineControl, and use Rice
   rb_define_module_function(rb_mKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
   
-  Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
-  Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
-
   int error;
   rb_load_protect(rb_str_new2("script/init"), Qfalse, &error);
   if(error){
-    VALUE lasterr = rb_gv_get("$!");
-    VALUE message = rb_obj_as_string(lasterr);
-    std::cout << RSTRING_PTR(message) << std::endl;
+    RubyUtils::LogError();
+    Exit();
   }
   
-  bowline->LoadURL("file://" + wxGetCwd() + "/public/index.html");
+  wxSize coords = wxSize(BowlineConfig::getInt(_("width")), BowlineConfig::getInt(_("height")));
+  wxString appName = BowlineConfig::getString(_("name"));
+  App::frame = new MainFrame(appName, coords);
+  
+  Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
+  
+  App::bowline = new BowlineControl(App::frame);
+  bowline->LoadURL("file://" + BowlineConfig::getString(_("index_path")));
+  
+  Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
 
   App::frame->Show(true);
   SetTopWindow(App::frame);
@@ -76,6 +80,8 @@ int App::OnExit()
 }
 
 extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
+  if(!App::bowline) return Qnil;
+  // std::cout << "run_script: " << StringValueCStr(arg) << std::endl;
   return(
     rb_str_new2(
       App::bowline->RunScript(StringValueCStr(arg)).c_str()
