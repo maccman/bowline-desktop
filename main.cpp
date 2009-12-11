@@ -50,7 +50,8 @@ bool App::OnInit()
   
   wxSize coords = wxSize(BowlineConfig::getInt(_("width")), BowlineConfig::getInt(_("height")));
   wxString appName = BowlineConfig::getString(_("name"));
-  App::frame = new MainFrame(appName, coords);
+  bool chrome = BowlineConfig::getBool(_("chrome"));
+  App::frame = new MainFrame(appName, coords, chrome);
   
   Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
   
