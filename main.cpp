@@ -6,6 +6,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+#include "wx_utils.cpp"
 #include "ruby_utils.cpp"
 #include "bowline_config.cpp"
 #include "main_frame.cpp"
@@ -27,6 +28,7 @@ public:
   static BowlineControl* bowline;
   void Idle(wxIdleEvent& evt);
   void Loaded(wxWebKitBeforeLoadEvent& evt);
+  wxString ResourcePath();
 };
 
 MainFrame* App::frame;
@@ -35,7 +37,7 @@ BowlineControl* App::bowline;
 IMPLEMENT_APP(App)
 
 bool App::OnInit()
-{
+{  
   this->InitRuby();
 
   // TODO - move this to BowlineControl, and use Rice
@@ -99,8 +101,9 @@ void App::InitRuby(){
   // Since ruby_init_gems is not public
   rb_define_module("Gem");
   Init_prelude();
-
-  ruby_incpush(wxGetCwd().c_str());
+  
+  wxString resource_path = this->ResourcePath();  
+  ruby_incpush(resource_path.c_str());
 }
 
 void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
@@ -113,4 +116,16 @@ void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
 
 void App::Loaded(wxWebKitBeforeLoadEvent& WXUNUSED(evt)){
   rb_eval_string_protect("Bowline::Desktop.loaded", NULL);
+}
+
+wxString App::ResourcePath(){
+  wxString argv1 = App::argv[1];
+  if(argv1){
+    if(argv1 == ".") return wxGetCwd();
+    if(wxIsAbsolutePath(argv1)) return argv1;
+    wxString execPath = wxUtils::FindAppPath(App::argv[0], wxGetCwd());
+    return execPath + wxFILE_SEP_PATH + argv1;
+  } else {
+    return wxGetCwd();
+  }
 }
