@@ -1,4 +1,6 @@
 #include <wx/wx.h>
+#include <wx/file.h>
+#include <wx/stdpaths.h>
 #include <ruby.h>
 #include <iostream>
 
@@ -119,13 +121,13 @@ void App::Loaded(wxWebKitBeforeLoadEvent& WXUNUSED(evt)){
 }
 
 wxString App::ResourcePath(){
-  wxString argv1 = App::argv[1];
-  if(argv1){
+  if(App::argc > 1){
+    wxString argv1 = App::argv[1];
     if(argv1 == ".") return wxGetCwd();
     if(wxIsAbsolutePath(argv1)) return argv1;
-    wxString execPath = wxUtils::FindAppPath(App::argv[0], wxGetCwd());
-    return execPath + wxFILE_SEP_PATH + argv1;
+    return wxGetCwd() + wxFILE_SEP_PATH + argv1;
   } else {
-    return wxGetCwd();
+    wxString path = wxStandardPaths::Get().GetResourcesDir();
+    return path;
   }
 }
