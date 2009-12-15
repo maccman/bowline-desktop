@@ -1,6 +1,7 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/stdpaths.h>
+#include <wx/timer.h>
 #include <ruby.h>
 #include <iostream>
 
@@ -28,9 +29,10 @@ public:
   virtual void InitRuby();
   static MainFrame* frame;
   static BowlineControl* bowline;
+  void Tick(wxTimerEvent& evt);
   void Idle(wxIdleEvent& evt);
-  void Loaded(wxWebKitBeforeLoadEvent& evt);
   wxString ResourcePath();
+  wxTimer tickTimer;
 };
 
 MainFrame* App::frame;
@@ -56,13 +58,13 @@ bool App::OnInit()
   wxString appName = BowlineConfig::getString(_("name"));
   bool chrome = BowlineConfig::getBool(_("chrome"));
   App::frame = new MainFrame(appName, coords, chrome);
-  
-  Connect(wxID_ANY, wxEVT_WEBKIT_BEFORE_LOAD, wxWebkitBeforeLoadEventHandler(App::Loaded));
-  
+    
   App::bowline = new BowlineControl(App::frame);
   bowline->LoadURL("file://" + BowlineConfig::getString(_("index_path")));
   
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
+  tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
+  tickTimer.Start(50);
 
   App::frame->Show(true);
   SetTopWindow(App::frame);
@@ -80,6 +82,7 @@ bool App::OnInit()
 
 int App::OnExit()
 {
+  tickTimer.Stop();
   ruby_finalize();
   return 0;
 }
@@ -87,11 +90,8 @@ int App::OnExit()
 extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
   if(!App::bowline) return Qnil;
   // std::cout << "run_script: " << StringValueCStr(arg) << std::endl;
-  return(
-    rb_str_new2(
-      App::bowline->RunScript(StringValueCStr(arg)).c_str()
-    )
-  );
+  wxString result = App::bowline->RunScript(StringValueCStr(arg));
+  return(rb_str_new2(result.c_str()));
 }
 
 void App::InitRuby(){
@@ -108,16 +108,16 @@ void App::InitRuby(){
   ruby_incpush(resource_path.c_str());
 }
 
+void App::Tick(wxTimerEvent& WXUNUSED(evt)){
+  rb_eval_string_protect("Bowline::Desktop.tick", NULL);
+}
+
 void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
-  rb_eval_string_protect("Bowline::Desktop.idle", NULL);
   // This absolutely sucks. Needed to get threads running.
   // There is a Ruby API to do this properly (see RubyGVL),
   // but it keeps segfaulting on me
-  rb_eval_string_protect("sleep(0.05)", NULL);
-}
-
-void App::Loaded(wxWebKitBeforeLoadEvent& WXUNUSED(evt)){
-  rb_eval_string_protect("Bowline::Desktop.loaded", NULL);
+  // rb_eval_string_protect("sleep(0.05)", NULL);
+  // rb_eval_string_protect("Bowline::Desktop.idle", NULL);
 }
 
 wxString App::ResourcePath(){
