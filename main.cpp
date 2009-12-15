@@ -1,6 +1,7 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/stdpaths.h>
+#include <wx/thread.h>
 #include <ruby.h>
 #include <iostream>
 
@@ -10,6 +11,7 @@
 
 #include "wx_utils.cpp"
 #include "ruby_utils.cpp"
+#include "ruby_gvl.cpp"
 #include "bowline_config.cpp"
 #include "main_frame.cpp"
 #include "bowline_control.cpp"
@@ -67,6 +69,9 @@ bool App::OnInit()
   App::frame->Show(true);
   SetTopWindow(App::frame);
   
+  RubyGVL::Unlock();
+  RubyGVL::Release();
+  
   #ifdef __WXMAC__
   // Temporary measure to enable interaction
   ProcessSerialNumber PSN;
@@ -80,18 +85,18 @@ bool App::OnInit()
 
 int App::OnExit()
 {
+  RubyGVL::Lock();
   ruby_finalize();
   return 0;
 }
 
 extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
+  RubyGVL lock;
   if(!App::bowline) return Qnil;
-  // std::cout << "run_script: " << StringValueCStr(arg) << std::endl;
-  return(
-    rb_str_new2(
-      App::bowline->RunScript(StringValueCStr(arg)).c_str()
-    )
-  );
+  std::cout << "run_script: " << StringValueCStr(arg) << std::endl;
+  if(!RubyGVL::locked) std::cout << "NOT LOCKED\n";
+  wxString result = App::bowline->RunScript(StringValueCStr(arg));
+  return(rb_str_new2(result.c_str()));
 }
 
 void App::InitRuby(){
@@ -109,15 +114,19 @@ void App::InitRuby(){
 }
 
 void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
+  RubyGVL lock;
+  std::cout << "Running App::Idle\n";
+  if(!RubyGVL::locked) std::cout << "NOT LOCKED\n";
   rb_eval_string_protect("Bowline::Desktop.idle", NULL);
   // This absolutely sucks. Needed to get threads running.
   // There is a Ruby API to do this properly (see RubyGVL),
   // but it keeps segfaulting on me
-  rb_eval_string_protect("sleep(0.05)", NULL);
+  // rb_eval_string_protect("sleep(0.05)", NULL);
 }
 
 void App::Loaded(wxWebKitBeforeLoadEvent& WXUNUSED(evt)){
-  rb_eval_string_protect("Bowline::Desktop.loaded", NULL);
+  RubyGVL lock;
+  // rb_eval_string_protect("Bowline::Desktop.loaded", NULL);
 }
 
 wxString App::ResourcePath(){

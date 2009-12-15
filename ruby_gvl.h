@@ -10,12 +10,16 @@ class RubyGVL
 { 
 public:
   RubyGVL();
-  static void Lock();
-  static void Unlock();
+  static bool Lock();
+  static bool Unlock();
+  static void Release();
   virtual ~RubyGVL();
-private:
-  static struct rb_blocking_region_buffer *curb_lock;
   static bool locked;
+private:
+  bool did_lock;
+  static struct rb_blocking_region_buffer *curb_lock;
+  static wxMutex mutex;
+  static bool released;
 };
 
 #endif

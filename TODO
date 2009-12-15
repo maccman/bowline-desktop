@@ -13,3 +13,6 @@ Create Windowing API (with Rice):
   Icons
   
 Get copy/past keyboard shortcuts working
+
+Worked out locking errors:
+  It gets unlocked by other functions
