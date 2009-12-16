@@ -1,0 +1,3 @@
+// wxMessageBox
+// wxGetTextFromUser
+// wxGetPasswordFromUser

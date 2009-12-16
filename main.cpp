@@ -15,6 +15,8 @@
 #include "main_frame.cpp"
 #include "bowline_control.cpp"
 
+#include "bowline/bowline.cpp"
+
 extern "C" {
   void Init_prelude(void);
   VALUE App_RunScript(VALUE self, VALUE arg);
@@ -46,6 +48,7 @@ bool App::OnInit()
 
   // TODO - move this to BowlineControl, and use Rice
   rb_define_module_function(rb_mKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
+  Init_Bowline();
   
   int error;
   rb_load_protect(rb_str_new2("script/init"), Qfalse, &error);

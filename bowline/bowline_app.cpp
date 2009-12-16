@@ -1,0 +1,3 @@
+// Exit app
+// wxBeginBusyCursor
+// wxBell
