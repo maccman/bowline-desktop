@@ -2,8 +2,8 @@
 #include <wx/file.h>
 #include <wx/stdpaths.h>
 #include <wx/timer.h>
-#include <ruby.h>
 #include <iostream>
+#include <rice/detail/ruby.hpp>
 
 #ifdef __WXMAC__
 #include <ApplicationServices/ApplicationServices.h>
@@ -11,69 +11,50 @@
 
 #include "wx_utils.cpp"
 #include "ruby_utils.cpp"
-#include "bowline_config.cpp"
-#include "main_frame.cpp"
-#include "bowline_control.cpp"
-
 #include "bowline/bowline.cpp"
 
 extern "C" {
   void Init_prelude(void);
-  VALUE App_RunScript(VALUE self, VALUE arg);
-  extern VALUE rb_mKernel;
 }
 
 class App : public wxApp
 {
 public:
-  virtual bool OnInit();
-  virtual int OnExit();
-  virtual void InitRuby();
-  static MainFrame* frame;
-  static BowlineControl* bowline;
+  bool OnInit();
+  int OnExit();
+  void InitRuby();
   void Tick(wxTimerEvent& evt);
   void Idle(wxIdleEvent& evt);
   wxString ResourcePath();
+  BowlineMainWindow* window;
   wxTimer tickTimer;
 };
-
-MainFrame* App::frame;
-BowlineControl* App::bowline;
 
 IMPLEMENT_APP(App)
 
 bool App::OnInit()
-{  
-  this->InitRuby();
-
-  // TODO - move this to BowlineControl, and use Rice
-  rb_define_module_function(rb_mKernel, "run_js_script", RUBY_METHOD_FUNC(App_RunScript), 1);
-  Init_Bowline();
+{
+  window = new BowlineMainWindow();
+  
+  InitRuby();
+  InitBowline();
   
   int error;
   rb_load_protect(rb_str_new2("script/init"), Qfalse, &error);
   if(error){
     RubyUtils::LogError();
-    Exit();
+    throw "Ruby Error";
   }
-  
-  wxSize coords = wxSize(BowlineConfig::getInt(_("width")), BowlineConfig::getInt(_("height")));
-  wxString appName = BowlineConfig::getString(_("name"));
-  bool chrome = BowlineConfig::getBool(_("chrome"));
-  App::frame = new MainFrame(appName, coords, chrome);
     
-  App::bowline = new BowlineControl(App::frame);
-  bowline->LoadURL("file://" + BowlineConfig::getString(_("index_path")));
-  
-  Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
+  // Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
   tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
   tickTimer.Start(50);
 
-  App::frame->Show(true);
-  SetTopWindow(App::frame);
+  window->SetupConfiguration();
+  window->Show(true);
   
   #ifdef __WXMAC__
-  // Temporary measure to enable interaction
+  // Enable interaction for unbundled apps
   ProcessSerialNumber PSN;
   GetCurrentProcess(&PSN);
   TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
@@ -86,15 +67,10 @@ bool App::OnInit()
 int App::OnExit()
 {
   tickTimer.Stop();
-  ruby_finalize();
+  // TODO cleaning up Ruby causes a segfault, 
+  // probably because the tickTimer is still executing
+  // ruby_finalize();
   return 0;
-}
-
-extern "C" VALUE App_RunScript(VALUE self, VALUE arg){
-  if(!App::bowline) return Qnil;
-  // std::cout << "run_script: " << StringValueCStr(arg) << std::endl;
-  wxString result = App::bowline->RunScript(StringValueCStr(arg));
-  return(rb_str_new2(result.c_str()));
 }
 
 void App::InitRuby(){
@@ -115,13 +91,13 @@ void App::Tick(wxTimerEvent& WXUNUSED(evt)){
   rb_eval_string_protect("Bowline::Desktop.tick", NULL);
 }
 
-void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
-  // This absolutely sucks. Needed to get threads running.
-  // There is a Ruby API to do this properly (see RubyGVL),
-  // but it keeps segfaulting on me
-  // rb_eval_string_protect("sleep(0.05)", NULL);
-  // rb_eval_string_protect("Bowline::Desktop.idle", NULL);
-}
+// void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
+//   This absolutely sucks. Needed to get threads running.
+//   There is a Ruby API to do this properly (see RubyGVL),
+//   but it keeps segfaulting on me
+//   rb_eval_string_protect("sleep(0.05)", NULL);
+//   rb_eval_string_protect("Bowline::Desktop.idle", NULL);
+// }
 
 wxString App::ResourcePath(){
   if(App::argc > 1){

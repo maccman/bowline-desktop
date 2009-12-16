@@ -1,12 +1,14 @@
+#ifndef BOWLINE_CONFIG_CPP_8U7DUT7X
+#define BOWLINE_CONFIG_CPP_8U7DUT7X
+
 class BowlineConfig
 {
 public:
   static VALUE get(const wxString& name){
     int error;
-    VALUE result = rb_eval_string_protect(
-      "Bowline.configuration." + name, 
-      &error
-    );
+    wxString rubyCode = _("Bowline.configuration.");
+    rubyCode.append(name);
+    VALUE result = rb_eval_string_protect(rubyCode.c_str(), &error);
     if(error) {
       RubyUtils::LogError();
       throw "Config Error";
@@ -30,3 +32,5 @@ public:
     return false;
   }
 };
+
+#endif /* end of include guard: BOWLINE_CONFIG_CPP_8U7DUT7X */

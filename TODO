@@ -12,7 +12,7 @@ Create Windowing API (with Rice):
   Close
   Icons
   -Clipboard
-  Busy message
+  -Busy message
   -Host/IP
   
 Get copy/past keyboard shortcuts working
