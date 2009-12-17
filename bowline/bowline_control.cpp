@@ -169,14 +169,11 @@ void Init_Bowline_Control(){
           Arg("flags")              = 0
         )
       )
-      .const_set("FD_OPEN",             wxFD_OPEN)
-      .const_set("FD_SAVE",             wxFD_SAVE)
-      .const_set("FD_OVERWRITE_PROMPT", wxFD_OVERWRITE_PROMPT);
-      
-      // TODO 
-      // weirdly wxFD_FILE_MUST_EXIST causes the following Ruby error:
-      //  [BUG] object allocation during garbage collection phase
-      // .const_set("FD_FILE_MUST_EXIST",  wxFD_FILE_MUST_EXIST)
+      .const_set("FD_OPEN",             to_ruby((int)wxFD_OPEN))
+      .const_set("FD_SAVE",             to_ruby((int)wxFD_SAVE))
+      .const_set("FD_OVERWRITE_PROMPT", to_ruby((int)wxFD_OVERWRITE_PROMPT))
+      .const_set("FD_FILE_MUST_EXIST",  to_ruby((int)wxFD_FILE_MUST_EXIST));
+
 }
 
 #endif /* end of include guard: BOWLINE_CONTROL_CPP_F02I8V7L */

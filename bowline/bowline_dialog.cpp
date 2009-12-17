@@ -24,16 +24,12 @@ void Init_Bowline_Dialog(){
         Arg("style") = wxOK
       )
     )
-    .const_set("YES_NO",           wxYES_NO)
-    .const_set("OK",               wxOK);
-    
-    // TODO 
-    // weirdly if any of the following constants are defined we get a Ruby error:
-    //  [BUG] object allocation during garbage collection phase
-    // .const_set("CANCEL",           wxCANCEL)
-    // .const_set("ICON_EXCLAMATION", wxICON_EXCLAMATION)
-    // .const_set("ICON_HAND",        wxICON_HAND)
-    // .const_set("ICON_ERROR",       wxICON_ERROR)
-    // .const_set("QUESTION",         wxICON_QUESTION)
-    // .const_set("INFORMATION",      wxICON_INFORMATION)
+    .const_set("YES_NO",           to_ruby(wxYES_NO))
+    .const_set("OK",               to_ruby(wxOK))
+    .const_set("CANCEL",           to_ruby(wxCANCEL))
+    .const_set("ICON_EXCLAMATION", to_ruby(wxICON_EXCLAMATION))
+    .const_set("ICON_HAND",        to_ruby(wxICON_HAND))
+    .const_set("ICON_ERROR",       to_ruby(wxICON_ERROR))
+    .const_set("QUESTION",         to_ruby(wxICON_QUESTION))
+    .const_set("INFORMATION",      to_ruby(wxICON_INFORMATION));
 }
