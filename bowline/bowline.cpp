@@ -4,7 +4,6 @@
 #include "bowline_window.cpp"
 #include "bowline_app.cpp"
 #include "bowline_misc.cpp"
-#include "bowline_network.cpp"
 #include "bowline_dialog.cpp"
 #include "bowline_sound.cpp"
 // #include "bowline_dock.cpp"
@@ -15,7 +14,6 @@ void InitBowline(){
   Init_Bowline_Host();
   Init_Bowline_App();
   Init_Bowline_Misc();
-  Init_Bowline_Network();
   Init_Bowline_Dialog();
   Init_Bowline_Sound();
   // Init_Bowline_Dock();
