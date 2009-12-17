@@ -11,12 +11,7 @@ using namespace Rice;
 class BowlineWindow : public BowlineControl
 {
 public:
-  BowlineWindow (
-    const wxString path = wxEmptyString, 
-    const wxString name = wxEmptyString,
-    const bool chrome = true, 
-    const wxSize size = wxDefaultSize
-  ) : BowlineControl(wxTheApp->GetTopWindow(), path, name, chrome, size) {    
+  BowlineWindow() : BowlineControl(wxTheApp->GetTopWindow()) {    
   }
 };
 
@@ -33,17 +28,9 @@ void Init_Bowline_Window(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
   
-  // TODO - default arguments for the constructor
-  // (
-  //   Arg("path") = wxEmptyString,
-  //   Arg("name") = wxEmptyString,
-  //   Arg("chrome") = true,
-  //   Arg("size") = wxDefaultSize
-  // )
-  
   Class rb_cBowlineWindow = 
     define_class_under<BowlineWindow, BowlineControl>(rb_mBowlineDesktop, "Window")
-    .define_constructor(Constructor<BowlineWindow, wxString, wxString, bool, wxSize>());
+    .define_constructor(Constructor<BowlineWindow>());
 }
 
 #endif /* end of include guard: BOWLINE_WINDOW_CPP_PU66Y890 */

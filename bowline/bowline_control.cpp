@@ -8,7 +8,7 @@
 #define wxWebkitBeforeLoadEventHandler(func) \
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebKitBeforeLoadEventFunction, &func)
 
-class BowlineControl : public wxFrame
+class BowlineControl
 {
 public:
   BowlineControl (
@@ -17,12 +17,19 @@ public:
     const wxString name = wxEmptyString,
     const bool chrome = true, 
     const wxSize size = wxDefaultSize
-  ) : wxFrame(parent, wxID_ANY, name, wxDefaultPosition, size) {
+  ) {
+    frame = new wxFrame(
+      parent, 
+      wxID_ANY, 
+      name, 
+      wxDefaultPosition, 
+      size
+    );
     
     menuBar = new wxMenuBar;
-    SetMenuBar(menuBar);
+    frame->SetMenuBar(menuBar);
     
-    webkit = new wxWebKitCtrl(this, wxID_ANY, wxEmptyString);
+    webkit = new wxWebKitCtrl(frame, wxID_ANY, wxEmptyString);
     LoadFile(path);
   }
   
@@ -48,7 +55,7 @@ public:
       default_path, 
       wxDD_DEFAULT_STYLE, 
       wxDefaultPosition, 
-      this
+      frame
     );    
     return path;
   }
@@ -69,20 +76,62 @@ public:
       default_extension,
       wildcard,
       flags,
-      this
+      frame
     );
     return path;
   }
   
-  void SetHeight(int height){
-    // TODO
+  void Center(){
+    // TODO - Support direction
+    frame->Center();
   }
   
-  void SetWidth(int width){
-    // TODO
+  void Close(){
+    frame->Close(false);
+  }
+  
+  void Show(){
+    frame->Show(true);
+  }
+  
+  void Hide(){
+    frame->Show(false);
+  }
+  
+  void Enable(){
+    frame->Enable(true);
+  }
+  
+  void Disable(){
+    frame->Enable(false);
+  }
+  
+  int GetId() const{
+    return frame->GetId();
+  }
+  
+  void MakeModal(bool flag){
+    frame->MakeModal(flag);
+  }
+  
+  void SetName(wxString name){
+    frame->SetName(name);
+  }
+  
+  void Raise(){
+    frame->Raise();
+  }
+  
+  void SetSize(int height, int width){
+    frame->SetSize(-1, -1, height, width, wxSIZE_USE_EXISTING);
+  }
+  
+  void SetPosition(int x, int y){
+    frame->Move(x, y);
   }
 
 protected:
+  wxFrame* frame;
   wxWebKitCtrl* webkit;
   wxMenuBar *menuBar;
 };
@@ -102,8 +151,8 @@ void Init_Bowline_Control(){
      .define_method("run_script",  &BowlineControl::RunScript)
      .define_method("raise",       &BowlineControl::Raise)
      .define_method("show",        &BowlineControl::Show,   Arg("show") = true)
-     .define_method("height=",     &BowlineControl::SetHeight)
-     .define_method("width=",      &BowlineControl::SetWidth)
+     .define_method("set_size",    &BowlineControl::SetSize)
+     .define_method("set_position",&BowlineControl::SetPosition)
      .define_method("select_dir",  &BowlineControl::SelectDir, 
         (
           Arg("message") = (wxString)"Choose a directory", 

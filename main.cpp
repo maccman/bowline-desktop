@@ -51,7 +51,7 @@ bool App::OnInit()
   tickTimer.Start(50);
 
   window->SetupConfiguration();
-  window->Show(true);
+  window->Show();
   
   #ifdef __WXMAC__
   // Enable interaction for unbundled apps

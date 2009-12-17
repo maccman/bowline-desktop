@@ -1,4 +1,3 @@
-#include "ruby_gvl.h"
 
 struct rb_blocking_region_buffer *RubyGVL::curb_lock = NULL;
 bool RubyGVL::locked = true;

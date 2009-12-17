@@ -20,33 +20,31 @@ public:
   ) : BowlineControl(NULL, path, name, chrome, size) 
   {
     BowlineMainWindow::SetInstance(this);
-    wxTheApp->SetTopWindow(this);
+    wxTheApp->SetTopWindow(frame);
     
     fileMenu = new wxMenu();
     fileMenu->Append(ID_Quit, _("E&xit"));
     menuBar->Append(fileMenu, _("&File"));
-    Connect( ID_Quit, wxEVT_COMMAND_MENU_SELECTED,
+    frame->Connect( ID_Quit, wxEVT_COMMAND_MENU_SELECTED,
                   (wxObjectEventFunction) &BowlineMainWindow::OnQuit );    
   };
   
   void SetupConfiguration(){
-    wxSize coords = wxSize(
-      BowlineConfig::getInt(_("width")), 
-      BowlineConfig::getInt(_("height"))
-    );
     wxString appName  = BowlineConfig::getString(_("name"));
     bool chrome       = BowlineConfig::getBool(_("chrome"));
     wxString path     = BowlineConfig::getString(_("index_path"));
+    int width         = BowlineConfig::getInt(_("width"));
+    int height        = BowlineConfig::getInt(_("height"));
 
     SetName(appName);
-    SetSize(coords);
+    SetSize(height, width);
     SetChrome(chrome);
     LoadFile(path);
   }
   
   void OnQuit(wxCommandEvent& WXUNUSED(event))
   {
-    Close(true);
+    Close();
   }
   
   static BowlineMainWindow *GetInstance(){ return mainWindowInstance; }
