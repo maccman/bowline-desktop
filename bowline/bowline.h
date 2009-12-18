@@ -24,6 +24,4 @@ wxSize from_ruby<wxSize>(Rice::Object x) {
   return wxSize(from_ruby<int>(arr[0]), from_ruby<int>(arr[1]));
 }
 
-// TODO - wxSize
-
 #endif /* end of include guard: BOWLINE_H_TVWBTAN8 */

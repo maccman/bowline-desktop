@@ -1,16 +1,11 @@
 Create Windowing API (with Rice):
-  Resize window
+  -Resize window
   -Create new window
   -Select file
   -Select folder
-  list windows
-  Network offline
   Add Menus
   Context Menu?
-  Minimize
-  Maximize
-  Close
-  Icons
+  -Close
   -Clipboard
   -Busy message
   -Host/IP

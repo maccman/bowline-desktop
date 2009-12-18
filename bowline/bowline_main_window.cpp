@@ -1,6 +1,5 @@
 #include "bowline.h"
 #include "bowline_control.cpp"
-#include "bowline_config.cpp"
 
 using namespace Rice;
 
@@ -20,32 +19,8 @@ public:
   ) : BowlineControl(NULL, path, name, chrome, size) 
   {
     BowlineMainWindow::SetInstance(this);
-    wxTheApp->SetTopWindow(frame);
-    
-    fileMenu = new wxMenu();
-    fileMenu->Append(ID_Quit, _("E&xit"));
-    menuBar->Append(fileMenu, _("&File"));
-    frame->Connect( ID_Quit, wxEVT_COMMAND_MENU_SELECTED,
-                  (wxObjectEventFunction) &BowlineMainWindow::OnQuit );    
+    wxTheApp->SetTopWindow(frame);        
   };
-  
-  void SetupConfiguration(){
-    wxString appName  = BowlineConfig::getString(_("name"));
-    bool chrome       = BowlineConfig::getBool(_("chrome"));
-    wxString path     = BowlineConfig::getString(_("index_path"));
-    int width         = BowlineConfig::getInt(_("width"));
-    int height        = BowlineConfig::getInt(_("height"));
-
-    SetName(appName);
-    SetSize(height, width);
-    SetChrome(chrome);
-    LoadFile(path);
-  }
-  
-  void OnQuit(wxCommandEvent& WXUNUSED(event))
-  {
-    Close();
-  }
   
   static BowlineMainWindow *GetInstance(){ return mainWindowInstance; }
   static void SetInstance(BowlineMainWindow *win) { mainWindowInstance = win; }

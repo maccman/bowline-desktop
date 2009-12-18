@@ -3,10 +3,14 @@
 
 #include <wx/frame.h>
 #include <wx/html/webkit.h>
+#include <wx/weakref.h>
 
 // Not defined in webkit.h
 #define wxWebkitBeforeLoadEventHandler(func) \
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebKitBeforeLoadEventFunction, &func)
+    
+#define FREED_RETURN if(frame == NULL) return
+#define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
 
 class BowlineControl
 {
@@ -25,7 +29,7 @@ public:
       wxDefaultPosition, 
       size
     );
-    
+        
     menuBar = new wxMenuBar;
     frame->SetMenuBar(menuBar);
     
@@ -34,15 +38,18 @@ public:
   }
   
   void LoadFile(wxString path){
+    FREED_RETURN;
     if(path != wxEmptyString)
       webkit->LoadURL("file://" + path);
   }
   
   void SetChrome(bool flag){
+    FREED_RETURN;
     // TODO
   }
 
   wxString RunScript(wxString js){
+    FREED_RETURN_OBJ(wxEmptyString);
     return webkit->RunScript(js);
   }
 
@@ -50,6 +57,7 @@ public:
     const wxString message = "Choose a directory",
     const wxString default_path = wxEmptyString
   ) {
+    FREED_RETURN_OBJ(wxEmptyString);
     wxString path = wxDirSelector(
       message, 
       default_path, 
@@ -69,6 +77,7 @@ public:
     const wxString wildcard = "*.*",
     int flags = 0
   ){
+    FREED_RETURN_OBJ(wxEmptyString);
     const wxString& path = wxFileSelector(
       message,
       default_path,
@@ -81,57 +90,73 @@ public:
     return path;
   }
   
-  void Center(){
-    // TODO - Support direction
-    frame->Center();
+  void Center(int direction = wxBOTH){
+    FREED_RETURN;
+    frame->Center(direction);
   }
   
   void Close(){
+    FREED_RETURN;
     frame->Close(false);
   }
   
+  bool IsShown(){
+    FREED_RETURN_OBJ(false);
+    frame->IsShown();
+  }
+  
   void Show(){
+    FREED_RETURN;
     frame->Show(true);
   }
   
   void Hide(){
+    FREED_RETURN;
     frame->Show(false);
   }
   
   void Enable(){
+    FREED_RETURN;
     frame->Enable(true);
   }
   
   void Disable(){
+    FREED_RETURN;
     frame->Enable(false);
   }
   
   int GetId() const{
+    FREED_RETURN_OBJ(-1);
     return frame->GetId();
   }
   
   void MakeModal(bool flag){
+    FREED_RETURN;
     frame->MakeModal(flag);
   }
   
   void SetName(wxString name){
+    FREED_RETURN;
     frame->SetName(name);
   }
   
   void Raise(){
+    FREED_RETURN;
     frame->Raise();
   }
   
   void SetSize(int height, int width){
+    FREED_RETURN;
     frame->SetSize(-1, -1, height, width, wxSIZE_USE_EXISTING);
   }
   
   void SetPosition(int x, int y){
+    FREED_RETURN;
     frame->Move(x, y);
   }
 
 protected:
-  wxFrame* frame;
+  wxWeakRef<wxFrame> frame;
   wxWebKitCtrl* webkit;
   wxMenuBar *menuBar;
 };
@@ -139,27 +164,28 @@ protected:
 void Init_Bowline_Control(){
   Class rb_cBowlineControl= 
     define_class<BowlineControl>("BowlineInternalControl")
-     .define_method("center",      &BowlineControl::Center, Arg("direction") = wxBOTH)
-     .define_method("close",       &BowlineControl::Close,  Arg("force") = false)
+     .define_method("_center",     &BowlineControl::Center, Arg("direction") = (int)wxBOTH)
+     .define_method("close",       &BowlineControl::Close)
      .define_method("chrome=",     &BowlineControl::SetChrome)
      .define_method("disable",     &BowlineControl::Disable)
-     .define_method("enable",      &BowlineControl::Enable, Arg("enable") = true)
-     .define_method("file=",       &BowlineControl::LoadFile)
+     .define_method("enable",      &BowlineControl::Enable)
+     .define_method("_file=",      &BowlineControl::LoadFile)
      .define_method("id",          &BowlineControl::GetId)
      .define_method("modal",       &BowlineControl::MakeModal, Arg("flag") = true)
      .define_method("name=",       &BowlineControl::SetName)
      .define_method("run_script",  &BowlineControl::RunScript)
      .define_method("raise",       &BowlineControl::Raise)
-     .define_method("show",        &BowlineControl::Show,   Arg("show") = true)
+     .define_method("show",        &BowlineControl::Show)
+     .define_method("hide",        &BowlineControl::Hide)
      .define_method("set_size",    &BowlineControl::SetSize)
      .define_method("set_position",&BowlineControl::SetPosition)
-     .define_method("select_dir",  &BowlineControl::SelectDir, 
+     .define_method("_select_dir", &BowlineControl::SelectDir, 
         (
           Arg("message") = (wxString)"Choose a directory", 
           Arg("default_path") = (wxString)wxEmptyString
         )
       )
-     .define_method("select_file", &BowlineControl::SelectFile,
+     .define_method("_select_file", &BowlineControl::SelectFile,
         (
           Arg("message")            = (wxString)"Choose a file",
           Arg("default_path")       = (wxString)wxEmptyString,
@@ -169,11 +195,15 @@ void Init_Bowline_Control(){
           Arg("flags")              = 0
         )
       )
+      .define_method("shown?",    &BowlineControl::IsShown)
       .const_set("FD_OPEN",             to_ruby((int)wxFD_OPEN))
       .const_set("FD_SAVE",             to_ruby((int)wxFD_SAVE))
       .const_set("FD_OVERWRITE_PROMPT", to_ruby((int)wxFD_OVERWRITE_PROMPT))
-      .const_set("FD_FILE_MUST_EXIST",  to_ruby((int)wxFD_FILE_MUST_EXIST));
-
+      .const_set("FD_FILE_MUST_EXIST",  to_ruby((int)wxFD_FILE_MUST_EXIST))
+      .const_set("HORIZONTAL",          to_ruby((int)wxHORIZONTAL))
+      .const_set("VERTICAL",            to_ruby((int)wxVERTICAL))
+      .const_set("BOTH",                to_ruby((int)wxBOTH))
+      .const_set("CENTRE_ON_SCREEN",    to_ruby((int)wxCENTRE_ON_SCREEN));
 }
 
 #endif /* end of include guard: BOWLINE_CONTROL_CPP_F02I8V7L */

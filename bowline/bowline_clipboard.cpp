@@ -35,8 +35,8 @@ void Init_Bowline_Clipboard(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
 
-  Class rb_cBowlineClipboard =
-    define_class_under(rb_mBowlineDesktop, "Clipboard")
-    .define_singleton_method("write", &bowline_clipboard_write)
-    .define_singleton_method("read", &bowline_clipboard_read);
+  Module rb_mBowlineClipboard =
+    define_module_under(rb_mBowlineDesktop, "Clipboard")
+    .define_module_function("write", &bowline_clipboard_write)
+    .define_module_function("read", &bowline_clipboard_read);
 }

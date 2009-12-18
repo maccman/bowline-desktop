@@ -11,8 +11,8 @@ using namespace Rice;
 class BowlineWindow : public BowlineControl
 {
 public:
-  BowlineWindow() : BowlineControl(wxTheApp->GetTopWindow()) {    
-  }
+  BowlineWindow() : BowlineControl(wxTheApp->GetTopWindow()){ 
+  };  
 };
 
 // This is to stop Ruby GC the window, trying to delete

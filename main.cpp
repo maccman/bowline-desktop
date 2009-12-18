@@ -49,9 +49,6 @@ bool App::OnInit()
   // Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
   tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
   tickTimer.Start(50);
-
-  window->SetupConfiguration();
-  window->Show();
   
   #ifdef __WXMAC__
   // Enable interaction for unbundled apps

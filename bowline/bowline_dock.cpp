@@ -21,8 +21,8 @@ void Init_Bowline_Dock(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
   
-  Class rb_cBowlineDock =
+  Module rb_mBowlineDock =
     define_class_under(rb_mBowlineDesktop, "Dock")
-    .define_singleton_method("badge=", &bowline_dock_set_badge)
-    .define_singleton_method("clear_badge", &bowline_dock_clear_badge);
+    .define_module_function("badge=", &bowline_dock_set_badge)
+    .define_module_function("clear_badge", &bowline_dock_clear_badge);
 }

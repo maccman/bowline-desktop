@@ -11,7 +11,7 @@ void Init_Bowline_Sound(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
   
-  Class rb_cBowlineSound =
-    define_class_under(rb_mBowlineDesktop, "Sound")
-    .define_singleton_method("play", &bowline_sound_play);
+  Module rb_mBowlineSound =
+    define_module_under(rb_mBowlineDesktop, "Sound")
+    .define_module_function("play", &bowline_sound_play);
 }

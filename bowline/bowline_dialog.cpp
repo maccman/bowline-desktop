@@ -15,9 +15,9 @@ void Init_Bowline_Dialog(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
   
-  Class rb_cBowlineDialog =
-    define_class_under(rb_mBowlineDesktop, "Dialog")
-    .define_singleton_method("message", &bowline_dialog_message,
+  Module rb_mBowlineDialog =
+    define_module_under(rb_mBowlineDesktop, "Dialog")
+    .define_module_function("_message", &bowline_dialog_message,
       (
         Arg("message"),
         Arg("caption") = (wxString)"Message",

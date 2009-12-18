@@ -34,9 +34,9 @@ void Init_Bowline_Host(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
   
-  Class rb_cBowlineHost =
-    define_class_under(rb_mBowlineDesktop, "Host")
-    .define_singleton_method("name",      &bowline_host_name)
-    .define_singleton_method("ip",        &bowline_host_ip)
-    .define_singleton_method("public_ip", &bowline_host_public_ip);
+  Module rb_mBowlineHost =
+    define_module_under(rb_mBowlineDesktop, "Host")
+    .define_module_function("host_name", &bowline_host_name)
+    .define_module_function("ip",        &bowline_host_ip)
+    .define_module_function("public_ip", &bowline_host_public_ip);
 }
