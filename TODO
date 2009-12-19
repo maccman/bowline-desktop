@@ -1,18 +1,8 @@
 Create Windowing API (with Rice):
-  -Resize window
-  -Create new window
-  -Select file
-  -Select folder
   Add Menus
   Context Menu?
-  -Close
-  -Clipboard
-  -Busy message
-  -Host/IP
   
 Get copy/past keyboard shortcuts working
 
 Allow js popup windows
 Allow js alerts
-
--Fix error that sometimes occurs when app exits

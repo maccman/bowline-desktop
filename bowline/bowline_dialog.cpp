@@ -25,6 +25,8 @@ void Init_Bowline_Dialog(){
       )
     )
     .const_set("YES_NO",           to_ruby(wxYES_NO))
+    .const_set("YES",              to_ruby(wxYES))
+    .const_set("NO",               to_ruby(wxNO))
     .const_set("OK",               to_ruby(wxOK))
     .const_set("CANCEL",           to_ruby(wxCANCEL))
     .const_set("ICON_EXCLAMATION", to_ruby(wxICON_EXCLAMATION))
