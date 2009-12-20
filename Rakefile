@@ -17,8 +17,3 @@ task :build do
   puts "g++ main.cpp #{opts} -o bowline-desktop"
   `g++ main.cpp #{opts} -o bowline-desktop`
 end
-
-desc "Run Bowline"
-task :run do
-  exec './main'
-end
