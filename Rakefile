@@ -1,15 +1,21 @@
+require 'rbconfig'
+gem 'rice', '>= 1.3.0'
+
+rice_gem = Gem.cache.find_name('rice').first
+
 task :default => :build
 desc "Build Bowline"
 task :build do
   # TODO - don't hardcode paths
   opts  = `wx-config --libs`.chomp
   opts  += `wx-config --cxxflags`.chomp
-  opts  += ' -I/usr/local/include/ruby19-1.9.1'
-  opts  += ' -I/usr/local/include/ruby19-1.9.1/i386-darwin9.8.0'
-  opts  += ' -lruby19-static'
-  opts  += ' -I/usr/local/lib/ruby19/gems/1.9.1/gems/rice-1.3.0/ruby/lib/include'
-  opts  += ' -L/usr/local/lib/ruby19/gems/1.9.1/gems/rice-1.3.0/ruby/lib/lib'
-  opts  += ' -lrice'
+  opts  += " -I#{RbConfig::CONFIG['rubyhdrdir']}"
+  opts  += " -I" + File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
+  opts  += " -lruby19-static"
+  opts  += " -I" + File.join(rice_gem.full_gem_path, *%w{ruby lib include})
+  opts  += " -L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
+  opts  += " -lrice"
+  puts "g++ main.cpp #{opts} -o bowline-desktop"
   `g++ main.cpp #{opts} -o bowline-desktop`
 end
 
