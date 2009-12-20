@@ -6,7 +6,6 @@ rice_gem = Gem.cache.find_name('rice').first
 task :default => :build
 desc "Build Bowline"
 task :build do
-  # TODO - don't hardcode paths
   opts  = `wx-config --libs`.chomp
   opts  += `wx-config --cxxflags`.chomp
   opts  += " -I#{RbConfig::CONFIG['rubyhdrdir']}"
