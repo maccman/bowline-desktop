@@ -1,7 +1,18 @@
-This project is to replace Titanium in Bowline.
+This project integrates wxWidgets with Ruby and Bowline.
+The public API documentation is in the Bowline project:
+  http://github.com/maccman/bowline
 
-* OSX only (for the moment)
+* OSX only (for the moment) due to  wx/html/webkit.h
 * uses wxWidgets 2.9
 * uses Ruby 1.9
+* uses the Rice 1.3.0 gem (http://github.com/jameskilton/rice)
 
+You'll need to statically compile Ruby and wxWidgets:
+
+  Ruby 1.9.1 configuration:
+    ./configure --with-static-linked-ext --program-suffix=19 --prefix=/usr/local
+
+  wxWidgets configuration:
+    ./configure --disable-shared
+    
 Run rake to compile.
