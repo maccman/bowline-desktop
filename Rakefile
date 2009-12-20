@@ -5,7 +5,7 @@ task :build do
   opts  = `wx-config --libs`.chomp
   opts  += `wx-config --cxxflags`.chomp
   opts  += ' -I/usr/local/include/ruby19-1.9.1'
-  opts  += ' -I/usr/local/include/ruby19-1.9.1/i386-darwin9.7.0'
+  opts  += ' -I/usr/local/include/ruby19-1.9.1/i386-darwin9.8.0'
   opts  += ' -lruby19-static'
   opts  += ' -I/usr/local/lib/ruby19/gems/1.9.1/gems/rice-1.3.0/ruby/lib/include'
   opts  += ' -L/usr/local/lib/ruby19/gems/1.9.1/gems/rice-1.3.0/ruby/lib/lib'
