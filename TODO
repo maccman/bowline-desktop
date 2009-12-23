@@ -6,3 +6,7 @@ Get copy/past keyboard shortcuts working
 
 Allow js popup windows
 Allow js alerts
+
+Remove TK from Ruby
+
+Allow JS to call out to Ruby (rather than poll)

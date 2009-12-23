@@ -9,7 +9,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#include "wx_utils.cpp"
+#include "wx_pathname.cpp"
 #include "ruby_utils.cpp"
 #include "bowline/bowline.cpp"
 
@@ -23,9 +23,10 @@ public:
   bool OnInit();
   int OnExit();
   void InitRuby();
+  void AddLoadPath(const wxPathname& path);
   void Tick(wxTimerEvent& evt);
   void Idle(wxIdleEvent& evt);
-  wxString ResourcePath();
+  wxPathname ResourcePath();
   BowlineMainWindow* window;
   wxTimer tickTimer;
 };
@@ -74,14 +75,43 @@ void App::InitRuby(){
   RUBY_INIT_STACK;
   ruby_init();
   ruby_script("bowline");
-  ruby_init_loadpath();
-
-  // Since ruby_init_gems is not public
-  rb_define_module("Gem");
-  Init_prelude();
+  // ruby_init_loadpath();
+        
+  wxPathname resource_path = this->ResourcePath();
+  wxPathname rubylib_path  = wxPathname::Join(resource_path, "vendor", "rubylib");
   
-  wxString resource_path = this->ResourcePath();  
-  ruby_incpush(resource_path.c_str());
+  wxString version  = "1.9.1";
+  // TODO - platform specific
+  wxString platform = "i386-darwin9.8.0";
+    
+  // AddLoadPath(wxPathname::Join(rubylib_path, version));                          // RUBY_LIB
+  // AddLoadPath(wxPathname::Join(rubylib_path, version, platform));                // RUBY_ARCHLIB
+  // AddLoadPath(wxPathname::Join(rubylib_path, "site_path"));                      // RUBY_SITE_LIB
+  // AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version));             // RUBY_SITE_LIB2
+  // AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version, platform));   // RUBY_SITE_ARCHLIB
+  // AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby"));                    // RUBY_VENDOR_LIB
+  // AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version));           // RUBY_VENDOR_LIB2
+  // AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version, platform)); // RUBY_VENDOR_ARCHLIB
+  // AddLoadPath(resource_path);
+  
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/1.9.1");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/1.9.1/i386-darwin9.8.0");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/site_path");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/site_path/1.9.1");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/site_path/1.9.1/i386-darwin9.8.0");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/vendor_ruby");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/vendor_ruby/1.9.1");
+  ruby_incpush("/Users/Alex/bowline-desktop/vendor/rubylib/vendor_ruby/1.9.1/i386-darwin9.8.0");
+  ruby_incpush("/Users/Alex/bowline-desktop");
+  
+  Init_prelude();
+}
+
+void App::AddLoadPath(const wxPathname& pathname){
+  wxString path = pathname.GetPath();
+  char cpath[path.size() + 1];
+  strcpy(cpath, path.c_str());
+  ruby_incpush(cpath);
 }
 
 void App::Tick(wxTimerEvent& WXUNUSED(evt)){
@@ -96,14 +126,15 @@ void App::Tick(wxTimerEvent& WXUNUSED(evt)){
 //   rb_eval_string_protect("Bowline::Desktop.idle", NULL);
 // }
 
-wxString App::ResourcePath(){
+wxPathname App::ResourcePath(){
   if(App::argc > 1){
     wxString argv1 = App::argv[1];
-    if(argv1 == ".") return wxGetCwd();
+    wxPathname cwd(wxGetCwd());
+    if(argv1 == ".") return cwd;
     if(wxIsAbsolutePath(argv1)) return argv1;
-    return wxGetCwd() + wxFILE_SEP_PATH + argv1;
+    return wxPathname::Join(cwd, argv1);
   } else {
     wxString path = wxStandardPaths::Get().GetResourcesDir();
-    return path;
+    return wxPathname(path);
   }
 }
