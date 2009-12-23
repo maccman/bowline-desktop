@@ -1,28 +1,26 @@
 #include <wx/filename.h>
 
-class wxPathname : public wxFileName
+class wxPathname
 {
-public:
-  wxPathname(const wxString& fullpath) : wxFileName(fullpath, wxEmptyString, wxPATH_NATIVE) {};
-  
-  static wxPathname Join(const wxPathname& dir1, const wxString& dir2){
-    wxPathname path(dir1);
+public:  
+  static wxString Join(const wxString& dir1,const wxString& dir2){
+    wxFileName path(dir1, wxEmptyString, wxPATH_NATIVE);
     path.AppendDir(dir2);
-    return path;
+    return path.GetPath();
   }
   
-  static wxPathname Join(const wxPathname& dir1, const wxString& dir2, const wxString& dir3){
-    wxPathname path(dir1);
+  static wxString Join(const wxString& dir1, const wxString& dir2, const wxString& dir3){
+    wxFileName path(dir1, wxEmptyString, wxPATH_NATIVE);
     path.AppendDir(dir2);
     path.AppendDir(dir3);
-    return path;
+    return path.GetPath();
   }
   
-  static wxPathname Join(const wxPathname& dir1, const wxString& dir2, const wxString& dir3, const wxString& dir4){
-    wxPathname path(dir1);
+  static wxString Join(const wxString& dir1, const wxString& dir2, const wxString& dir3, const wxString& dir4){
+    wxFileName path(dir1, wxEmptyString, wxPATH_NATIVE);
     path.AppendDir(dir2);
     path.AppendDir(dir3);
     path.AppendDir(dir4);
-    return path;
+    return path.GetPath();
   }
 };
