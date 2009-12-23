@@ -84,10 +84,12 @@ void App::InitRuby(){
   // TODO - platform specific
   wxString platform = "i386-darwin9.8.0";
     
-  // AddLoadPath(wxPathname::Join(rubylib_path, version));                          // RUBY_LIB
-  // AddLoadPath(wxPathname::Join(rubylib_path, version, platform));                // RUBY_ARCHLIB
-  // AddLoadPath(wxPathname::Join(rubylib_path, "site_path"));                      // RUBY_SITE_LIB
-  // AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version));             // RUBY_SITE_LIB2
+  wxPathname::Join(rubylib_path, version);                          // RUBY_LIB
+  wxPathname::Join(rubylib_path, version, platform);               // RUBY_ARCHLIB
+  wxPathname::Join(rubylib_path, "site_path");                      // RUBY_SITE_LIB
+  // Uncomment the next line for a KERN_INVALID_ADDRESS error
+  // wxPathname::Join(rubylib_path, "site_path", version);             // RUBY_SITE_LIB2
+  
   // AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version, platform));   // RUBY_SITE_ARCHLIB
   // AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby"));                    // RUBY_VENDOR_LIB
   // AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version));           // RUBY_VENDOR_LIB2
