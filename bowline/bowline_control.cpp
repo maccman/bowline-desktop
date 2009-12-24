@@ -135,14 +135,24 @@ public:
     frame->MakeModal(flag);
   }
   
+  void Raise(){
+    FREED_RETURN;
+    frame->Raise();
+  }
+  
   void SetName(wxString name){
     FREED_RETURN;
     frame->SetName(name);
   }
   
-  void Raise(){
+  void SetMinSize(int x, int y){
     FREED_RETURN;
-    frame->Raise();
+    frame->SetMinSize(wxSize(x, y));
+  }
+  
+  void SetMaxSize(int x, int y){
+    FREED_RETURN;
+    frame->SetMaxSize(wxSize(x, y));
   }
   
   void SetSize(int height, int width){
@@ -178,6 +188,8 @@ void Init_Bowline_Control(){
      .define_method("show",        &BowlineControl::Show)
      .define_method("hide",        &BowlineControl::Hide)
      .define_method("set_size",    &BowlineControl::SetSize)
+     .define_method("set_min_size",&BowlineControl::SetMinSize)
+     .define_method("set_max_size",&BowlineControl::SetMaxSize)
      .define_method("set_position",&BowlineControl::SetPosition)
      .define_method("_select_dir", &BowlineControl::SelectDir, 
         (
