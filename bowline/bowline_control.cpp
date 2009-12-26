@@ -2,7 +2,7 @@
 #define BOWLINE_CONTROL_CPP_F02I8V7L
 
 #include <wx/frame.h>
-#include <wx/html/webkit.h>
+#include "webkit.h"
 #include <wx/weakref.h>
 
 // Not defined in webkit.h
@@ -12,7 +12,7 @@
 #define FREED_RETURN if(frame == NULL) return
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
 
-class BowlineControl
+class BowlineControl : public wxEvtHandler
 {
 public:
   BowlineControl (
@@ -34,7 +34,18 @@ public:
     frame->SetMenuBar(menuBar);
     
     webkit = new wxWebKitCtrl(frame, wxID_ANY, wxEmptyString);
+    webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
+
     LoadFile(path);
+  }
+  
+  void OnScript(wxWebKitScriptEvent& evt){
+    if(scriptCallback)
+      scriptCallback.call("call", evt.GetData());
+  }
+  
+  void SetScriptCallback(Object proc){
+    scriptCallback = proc;
   }
   
   void LoadFile(wxString path){
@@ -164,34 +175,42 @@ public:
     FREED_RETURN;
     frame->Move(x, y);
   }
+  
+  void ShowInspector(bool console){
+    FREED_RETURN;
+    webkit->ShowInspector(console);
+  }
 
 protected:
   wxWeakRef<wxFrame> frame;
   wxWebKitCtrl* webkit;
   wxMenuBar *menuBar;
+  Object scriptCallback;
 };
 
 void Init_Bowline_Control(){
   Class rb_cBowlineControl= 
     define_class<BowlineControl>("BowlineInternalControl")
-     .define_method("_center",     &BowlineControl::Center, Arg("direction") = (int)wxBOTH)
-     .define_method("close",       &BowlineControl::Close)
-     .define_method("chrome=",     &BowlineControl::SetChrome)
-     .define_method("disable",     &BowlineControl::Disable)
-     .define_method("enable",      &BowlineControl::Enable)
-     .define_method("_file=",      &BowlineControl::LoadFile)
-     .define_method("id",          &BowlineControl::GetId)
-     .define_method("modal",       &BowlineControl::MakeModal, Arg("flag") = true)
-     .define_method("name=",       &BowlineControl::SetName)
-     .define_method("run_script",  &BowlineControl::RunScript)
-     .define_method("raise",       &BowlineControl::Raise)
-     .define_method("show",        &BowlineControl::Show)
-     .define_method("hide",        &BowlineControl::Hide)
-     .define_method("set_size",    &BowlineControl::SetSize)
-     .define_method("set_min_size",&BowlineControl::SetMinSize)
-     .define_method("set_max_size",&BowlineControl::SetMaxSize)
-     .define_method("set_position",&BowlineControl::SetPosition)
-     .define_method("_select_dir", &BowlineControl::SelectDir, 
+     .define_method("_center",          &BowlineControl::Center, Arg("direction") = (int)wxBOTH)
+     .define_method("close",            &BowlineControl::Close)
+     .define_method("chrome=",          &BowlineControl::SetChrome)
+     .define_method("disable",          &BowlineControl::Disable)
+     .define_method("enable",           &BowlineControl::Enable)
+     .define_method("_file=",           &BowlineControl::LoadFile)
+     .define_method("id",               &BowlineControl::GetId)
+     .define_method("modal",            &BowlineControl::MakeModal, Arg("flag") = true)
+     .define_method("name=",            &BowlineControl::SetName)
+     .define_method("run_script",       &BowlineControl::RunScript)
+     .define_method("raise",            &BowlineControl::Raise)
+     .define_method("show",             &BowlineControl::Show)
+     .define_method("hide",             &BowlineControl::Hide)
+     .define_method("set_size",         &BowlineControl::SetSize)
+     .define_method("set_min_size",     &BowlineControl::SetMinSize)
+     .define_method("set_max_size",     &BowlineControl::SetMaxSize)
+     .define_method("set_position",     &BowlineControl::SetPosition)
+     .define_method("show_inspector",   &BowlineControl::ShowInspector, Arg("console") = true)
+     .define_method("script_callback=", &BowlineControl::SetScriptCallback)
+     .define_method("_select_dir",      &BowlineControl::SelectDir, 
         (
           Arg("message") = (wxString)"Choose a directory", 
           Arg("default_path") = (wxString)wxEmptyString

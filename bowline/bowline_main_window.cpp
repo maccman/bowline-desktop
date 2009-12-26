@@ -19,9 +19,9 @@ public:
   ) : BowlineControl(NULL, path, name, chrome, size) 
   {
     BowlineMainWindow::SetInstance(this);
-    wxTheApp->SetTopWindow(frame);        
+    wxTheApp->SetTopWindow(frame);
   };
-  
+    
   static BowlineMainWindow *GetInstance(){ return mainWindowInstance; }
   static void SetInstance(BowlineMainWindow *win) { mainWindowInstance = win; }
   

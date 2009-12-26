@@ -11,13 +11,13 @@ opts  += " -I" + File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
 opts  += " -I" + File.join(rice_gem.full_gem_path, *%w{ruby lib include})
 
 libs = `wx-config --libs`.chomp
-libs += " -lruby19-static" # todo - get from RbConfig
+libs += " " + RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs += " -L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
 libs += " -lrice"
 
 vars :CC => "g++", :FLAGS => "-g", :LIBS => libs, :OPTS => opts
 
-rule :all, :depends => ["badge_label.o", "main.o"] do
+rule :all, :depends => ["badge_label.o", "webkit.o", "main.o"] do
   compile :LIBS, :output => "bowline-desktop"
   echo "Done compiling, run ./bowline-desktop"
 end
