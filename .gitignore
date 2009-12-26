@@ -1,3 +1,5 @@
 /bowline-desktop
 vendor
 script
+*.o
+Makefile
