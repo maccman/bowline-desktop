@@ -28,7 +28,7 @@ end
 rule "badge_label.o", :depends => ["bowline/badge_label.h", "bowline/badge_label.mm"] do
   compile :to_obj, :OPTS
 end
-rule "webkit.o", :depends => ["bowline/webkit.h", "bowline/webkit.mm"] do
+rule "webkit.o", :depends => ["bowline/webkit/webkit.h", "bowline/webkit/webkit.mm"] do
   compile :to_obj, :OPTS
 end
 

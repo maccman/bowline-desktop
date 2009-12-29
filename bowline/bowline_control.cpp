@@ -2,7 +2,7 @@
 #define BOWLINE_CONTROL_CPP_F02I8V7L
 
 #include <wx/frame.h>
-#include "webkit.h"
+#include "webkit/webkit.h"
 #include <wx/weakref.h>
 
 // Not defined in webkit.h
@@ -11,6 +11,8 @@
     
 #define FREED_RETURN if(frame == NULL) return
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
+
+using namespace Rice;
 
 class BowlineControl : public wxEvtHandler
 {
@@ -40,8 +42,9 @@ public:
   }
   
   void OnScript(wxWebKitScriptEvent& evt){
-    if(scriptCallback)
+    if(scriptCallback) {
       scriptCallback.call("call", evt.GetData());
+    }
   }
   
   void SetScriptCallback(Object proc){
@@ -60,7 +63,7 @@ public:
   }
 
   wxString RunScript(wxString js){
-    FREED_RETURN_OBJ(wxEmptyString);
+    if(!webkit) return wxEmptyString;
     return webkit->RunScript(js);
   }
 
@@ -176,14 +179,14 @@ public:
     frame->Move(x, y);
   }
   
-  void ShowInspector(bool console){
+  void ShowInspector(bool console = false){
     FREED_RETURN;
     webkit->ShowInspector(console);
   }
 
 protected:
   wxWeakRef<wxFrame> frame;
-  wxWebKitCtrl* webkit;
+  wxWeakRef<wxWebKitCtrl> webkit;
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
@@ -208,7 +211,7 @@ void Init_Bowline_Control(){
      .define_method("set_min_size",     &BowlineControl::SetMinSize)
      .define_method("set_max_size",     &BowlineControl::SetMaxSize)
      .define_method("set_position",     &BowlineControl::SetPosition)
-     .define_method("show_inspector",   &BowlineControl::ShowInspector, Arg("console") = true)
+     .define_method("show_inspector",   &BowlineControl::ShowInspector, Arg("console") = false)
      .define_method("script_callback=", &BowlineControl::SetScriptCallback)
      .define_method("_select_dir",      &BowlineControl::SelectDir, 
         (

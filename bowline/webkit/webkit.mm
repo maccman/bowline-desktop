@@ -31,7 +31,8 @@
 #include <WebKit/WebKit.h>
 #include <WebKit/HIWebView.h>
 #include <WebKit/CarbonUtils.h>
-// #include <WebKit/WebInspector.h>
+#include "WebInspector.h"
+#include "WebPreferencesCategory.h"
 #endif
 
 #include "webkit.h"
@@ -500,6 +501,16 @@ bool wxWebKitCtrl::Create(wxWindow *parent,
     [m_webView setHidden:false];
 
 #endif
+    
+    WebPreferences *m_webPrefs = [[WebPreferences alloc] initWithIdentifier:@"bowline"];
+    [m_webPrefs setDeveloperExtrasEnabled:true];
+  	[m_webPrefs setPlugInsEnabled:YES]; 
+  	[m_webPrefs setDOMPasteAllowed:YES];
+  	[m_webPrefs setUserStyleSheetEnabled:NO];
+  	[m_webPrefs setDatabasesEnabled:YES];
+		[m_webPrefs setLocalStorageEnabled:YES];
+  	[m_webView setPreferences:m_webPrefs];
+  	[m_webPrefs release];
 
     // Register event listener interfaces
     MyFrameLoadMonitor* myFrameLoadMonitor = [[MyFrameLoadMonitor alloc] initWithWxWindow: this];
@@ -521,12 +532,13 @@ wxWebKitCtrl::~wxWebKitCtrl()
     [m_webView setPolicyDelegate: nil];
     
     if (myFrameLoadMonitor)
-        [myFrameLoadMonitor release];
+      [myFrameLoadMonitor release];
         
     if (myPolicyDelegate)
-        [myPolicyDelegate release];
+      [myPolicyDelegate release];
     
-    // [m_webView release];
+    if (m_inspector)
+      [m_inspector release];
 }
 
 // ----------------------------------------------------------------------------
@@ -724,6 +736,7 @@ wxString wxWebKitCtrl::RunScript(const wxString& javascript){
         resultAsString = [result stringRepresentation];
     else
         fprintf(stderr, "wxWebKitCtrl::RunScript - Unexpected return type: %s!\n", [className UTF8String]);
+        resultAsString = @"";
 
     resultAsWxString = wxStringWithNSString( resultAsString );
     return resultAsWxString;
@@ -734,19 +747,18 @@ wxString wxWebKitCtrl::RunScript(const wxString& javascript){
 void wxWebKitCtrl::ShowInspector(bool console = false){
   if ( !m_webView )
       return;
-      
-  // if ( !m_inspector )
-  // {
-  //  m_inspector = [[WebInspector alloc] initWithWebView:m_webView];
-  //  [m_inspector detach:m_webView];
-  // }
-  // 
-  // if (console){
-  //  [m_inspector showConsole:m_webView];
-  // }
-  // else {
-  //  [m_inspector show:m_webView];
-  // }
+  
+  if( !m_inspector ){
+    m_inspector = [[WebInspector alloc] initWithWebView:m_webView];
+    [m_inspector detach:m_webView];
+  }
+  
+  if(console){
+    [m_inspector showConsole:m_webView];
+  }
+  else {
+   [m_inspector show:m_webView];
+  }
 }
 
 void wxWebKitCtrl::OnSize(wxSizeEvent &event){

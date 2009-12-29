@@ -10,4 +10,4 @@ Remove TK from Ruby
 
 Implement Chromeless windows
 
-Allow JS to call out to Ruby (rather than poll)
+Fix window reload

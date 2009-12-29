@@ -38,7 +38,9 @@ public:
                     const wxValidator& validator = wxDefaultValidator,
                     const wxString& name = wxT("webkitctrl"))
     {
-        Create(parent, winID, strURL, pos, size, style, validator, name);
+      m_webView   = NULL;
+      m_inspector = NULL;
+      Create(parent, winID, strURL, pos, size, style, validator, name);
     };
     bool Create(wxWindow *parent,
                 wxWindowID winID,
