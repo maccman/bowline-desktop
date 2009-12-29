@@ -503,6 +503,10 @@ bool wxWebKitCtrl::Create(wxWindow *parent,
 #endif
     
     WebPreferences *m_webPrefs = [[WebPreferences alloc] initWithIdentifier:@"bowline"];
+    
+    // Reduce memory footprint
+    [m_webPrefs setCacheModel:WebCacheModelDocumentBrowser];
+    
     [m_webPrefs setDeveloperExtrasEnabled:true];
   	[m_webPrefs setPlugInsEnabled:YES]; 
   	[m_webPrefs setDOMPasteAllowed:YES];
