@@ -16,3 +16,27 @@ You'll need to statically compile Ruby and wxWidgets:
     ./configure --disable-shared
     
 Run rake to compile.
+
+
+
+
+Building WebKit on OSX:
+
+Edit WebCore/Configurations/
+ Remove reference to EXTERNAL_SYMBOLS
+ Say no to strip code
+ Say no to dead code
+ Remove umbrella
+ Remove visibility-inlines-hidden
+ 
+ Edit JavaScriptCore/Configurations/
+  Remove reference to EXTERNAL_SYMBOLS
+  Say no to strip code
+  Say no to dead code
+  Disable ENABLE_DASHBOARD_SUPPORT
+ 
+Edit WebKitTools/Scripts/check-for-weak-vtables
+ Comment out
+ 
+Edit WebKitTools/Scripts/build-webkit
+ Remove WebKit from projects

@@ -2,12 +2,12 @@
 #define BOWLINE_CONTROL_CPP_F02I8V7L
 
 #include <wx/frame.h>
-#include "webkit/webkit.h"
+#include "WebViewExternal.h"
 #include <wx/weakref.h>
 
 // Not defined in webkit.h
-#define wxWebkitBeforeLoadEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebKitBeforeLoadEventFunction, &func)
+// #define wxWebkitBeforeLoadEventHandler(func) \
+//     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebKitBeforeLoadEventFunction, &func)
     
 #define FREED_RETURN if(frame == NULL) return
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
@@ -35,17 +35,17 @@ public:
     menuBar = new wxMenuBar;
     frame->SetMenuBar(menuBar);
     
-    webkit = new wxWebKitCtrl(frame, wxID_ANY, wxEmptyString);
-    webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
+    webkit = new wxWebView(frame, wxID_ANY);
+    // webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
 
     LoadFile(path);
   }
   
-  void OnScript(wxWebKitScriptEvent& evt){
-    if(scriptCallback) {
-      scriptCallback.call("call", evt.GetData());
-    }
-  }
+  // void OnScript(wxWebKitScriptEvent& evt){
+  //   if(scriptCallback) {
+  //     scriptCallback.call("call", evt.GetData());
+  //   }
+  // }
   
   void SetScriptCallback(Object proc){
     scriptCallback = proc;
@@ -181,12 +181,12 @@ public:
   
   void ShowInspector(bool console = false){
     FREED_RETURN;
-    webkit->ShowInspector(console);
+    // webkit->ShowInspector(console);
   }
 
 protected:
   wxWeakRef<wxFrame> frame;
-  wxWeakRef<wxWebKitCtrl> webkit;
+  wxWeakRef<wxWebView> webkit;
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
