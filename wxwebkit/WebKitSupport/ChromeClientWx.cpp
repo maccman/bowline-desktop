@@ -39,6 +39,7 @@
 #include "PlatformString.h"
 
 #include <stdio.h>
+#include <iostream>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -47,7 +48,8 @@
 #include <wx/textdlg.h>
 #include <wx/tooltip.h>
 
-#include "WebBrowserShell.h"
+#include "WebString.h"
+#include "WebRect.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
 
@@ -58,154 +60,30 @@ ChromeClientWx::ChromeClientWx(wxWebView* webView)
     m_webView = webView;
 }
 
-ChromeClientWx::~ChromeClientWx()
-{
+void ChromeClientWx::chromeDestroyed(){
+  // delete this;
 }
 
-void ChromeClientWx::chromeDestroyed()
-{
-    notImplemented();
-}
-
-void ChromeClientWx::setWindowRect(const FloatRect&)
-{
-    notImplemented();
-}
-
-FloatRect ChromeClientWx::windowRect()
-{
-    notImplemented();
-    return FloatRect();
-}
-
-FloatRect ChromeClientWx::pageRect()
-{
-    notImplemented();
-    return FloatRect();
-}
-
-float ChromeClientWx::scaleFactor()
-{
-    notImplemented();
-    return 0.0;
-}
-
-void ChromeClientWx::focus()
-{
-    notImplemented();
-}
-
-void ChromeClientWx::unfocus()
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::canTakeFocus(FocusDirection)
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::takeFocus(FocusDirection)
-{
-    notImplemented();
-}
-
-void ChromeClientWx::focusedNodeChanged(Node*)
-{
-}
-
-Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures&)
-{
-
-    // FIXME: Create a EVT_WEBKIT_NEW_WINDOW event, and only run this code
-    // when that event is not handled.
-    
-    Page* myPage = 0;
-    wxWebBrowserShell* newFrame = new wxWebBrowserShell(wxTheApp->GetAppName());
-    
-    if (newFrame->webview) {
-        newFrame->webview->LoadURL(request.resourceRequest().url().string());
-        newFrame->Show(true);
-
-        WebViewPrivate* impl = newFrame->webview->m_impl;
-        if (impl)
-            myPage = impl->page;
-    }
-    
-    return myPage;
-}
-
-Page* ChromeClientWx::createModalDialog(Frame*, const FrameLoadRequest&)
-{
-    notImplemented();
-    return 0;
-}
-
-void ChromeClientWx::show()
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::canRunModal()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::runModal()
-{
-    notImplemented();
-}
-
-void ChromeClientWx::setToolbarsVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::toolbarsVisible()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::setStatusbarVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::statusbarVisible()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::setScrollbarsVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::scrollbarsVisible()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::setMenubarVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::menubarVisible()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::setResizable(bool)
-{
-    notImplemented();
-}
+// Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures&)
+// {
+// 
+//     // FIXME: Create a EVT_WEBKIT_NEW_WINDOW event, and only run this code
+//     // when that event is not handled.
+//     
+//     Page* myPage = 0;
+//     wxWebBrowserShell* newFrame = new wxWebBrowserShell(wxTheApp->GetAppName());
+//     
+//     if (newFrame->webview) {
+//         newFrame->webview->LoadURL(request.resourceRequest().url().string());
+//         newFrame->Show(true);
+// 
+//         WebViewPrivate* impl = newFrame->webview->m_impl;
+//         if (impl)
+//             myPage = impl->page;
+//     }
+//     
+//     return myPage;
+// }
 
 void ChromeClientWx::addMessageToConsole(MessageSource source,
                                           MessageType type,
@@ -215,47 +93,33 @@ void ChromeClientWx::addMessageToConsole(MessageSource source,
                                           const String& sourceID)
 {
     if (m_webView) {
-        wxWebViewConsoleMessageEvent wkEvent(m_webView);
-        wkEvent.SetMessage(message);
-        wkEvent.SetLineNumber(lineNumber);
-        wkEvent.SetSourceID(sourceID);
-        wkEvent.SetLevel(static_cast<wxWebViewConsoleMessageLevel>(level));
-        m_webView->GetEventHandler()->ProcessEvent(wkEvent);
+        // wxWebViewConsoleMessageEvent wkEvent(m_webView);
+        // wkEvent.SetMessage((WebString)message);
+        // wkEvent.SetLineNumber(WebString)lineNumber);
+        // wkEvent.SetSourceID(sourceID);
+        // wkEvent.SetLevel(static_cast<wxWebViewConsoleMessageLevel>(level));
+        // m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
 
-bool ChromeClientWx::canRunBeforeUnloadConfirmPanel()
-{
-    notImplemented();
-    return true;
+bool ChromeClientWx::canRunBeforeUnloadConfirmPanel(){
+  return true;
 }
 
 bool ChromeClientWx::runBeforeUnloadConfirmPanel(const String& string,
                                                   Frame* frame)
 {
-    wxMessageDialog dialog(NULL, string, wxT("Confirm Action?"), wxYES_NO);
+    wxMessageDialog dialog(NULL, (WebString)string, wxT("Confirm Action?"), wxYES_NO);
     return dialog.ShowModal() == wxYES;
 }
-
-void ChromeClientWx::closeWindowSoon()
-{
-    notImplemented();
-}
-
-/*
-    Sites for testing prompts: 
-    Alert - just type in a bad web address or http://www.htmlite.com/JS002.php
-    Prompt - http://www.htmlite.com/JS007.php
-    Confirm - http://www.htmlite.com/JS006.php
-*/
 
 void ChromeClientWx::runJavaScriptAlert(Frame* frame, const String& string)
 {
     if (m_webView) {
         wxWebViewAlertEvent wkEvent(m_webView);
-        wkEvent.SetMessage(string);
+        wkEvent.SetMessage((WebString)string);
         if (!m_webView->GetEventHandler()->ProcessEvent(wkEvent))
-            wxMessageBox(string, wxT("JavaScript Alert"), wxOK);
+            wxMessageBox((WebString)string, wxT("JavaScript Alert"), wxOK);
     }
 }
 
@@ -264,11 +128,11 @@ bool ChromeClientWx::runJavaScriptConfirm(Frame* frame, const String& string)
     bool result = false;
     if (m_webView) {
         wxWebViewConfirmEvent wkEvent(m_webView);
-        wkEvent.SetMessage(string);
+        wkEvent.SetMessage((WebString)string);
         if (m_webView->GetEventHandler()->ProcessEvent(wkEvent))
             result = wkEvent.GetReturnCode() == wxID_YES;
         else {
-            wxMessageDialog dialog(NULL, string, wxT("JavaScript Confirm"), wxYES_NO);
+            wxMessageDialog dialog(NULL, (WebString)string, wxT("JavaScript Confirm"), wxYES_NO);
             dialog.Centre();
             result = (dialog.ShowModal() == wxID_YES);
         }
@@ -280,45 +144,22 @@ bool ChromeClientWx::runJavaScriptPrompt(Frame* frame, const String& message, co
 {
     if (m_webView) {
         wxWebViewPromptEvent wkEvent(m_webView);
-        wkEvent.SetMessage(message);
-        wkEvent.SetResponse(defaultValue);
+        wkEvent.SetMessage((WebString)message);
+        wkEvent.SetResponse((WebString)defaultValue);
         if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
-            result = wkEvent.GetResponse();
+            result = (WebString)wkEvent.GetResponse();
             return true;
         }
         else {
-            wxTextEntryDialog dialog(NULL, message, wxT("JavaScript Prompt"), wxEmptyString, wxOK | wxCANCEL);
+            wxTextEntryDialog dialog(NULL, (WebString)message, wxT("JavaScript Prompt"), wxEmptyString, wxOK | wxCANCEL);
             dialog.Centre();
             if (dialog.ShowModal() == wxID_OK) {
-                result = dialog.GetValue();
+                result = (WebString)dialog.GetValue();
                 return true;
             }
         }
     }
     return false;
-}
-
-void ChromeClientWx::setStatusbarText(const String&)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::shouldInterruptJavaScript()
-{
-    notImplemented();
-    return false;
-}
-
-bool ChromeClientWx::tabsToLinks() const
-{
-    notImplemented();
-    return false;
-}
-
-IntRect ChromeClientWx::windowResizerRect() const
-{
-    notImplemented();
-    return IntRect();
 }
 
 void ChromeClientWx::repaint(const IntRect& rect, bool contentChanged, bool immediate, bool repaintContentOnly)
@@ -327,105 +168,25 @@ void ChromeClientWx::repaint(const IntRect& rect, bool contentChanged, bool imme
         return;
     
     if (contentChanged)
-        m_webView->RefreshRect(rect);
+        m_webView->RefreshRect((WebRect)rect);
     
     if (immediate) {
         m_webView->Update();
     }
 }
 
-IntRect ChromeClientWx::windowToScreen(const IntRect& rect) const
-{
-    notImplemented();
-    return rect;
-}
-
-IntPoint ChromeClientWx::screenToWindow(const IntPoint& point) const
-{
-    notImplemented();
-    return point;
-}
-
 PlatformPageClient ChromeClientWx::platformPageClient() const
 {
-    return m_webView;
-}
-
-void ChromeClientWx::contentsSizeChanged(Frame*, const IntSize&) const
-{
-    notImplemented();
-}
-
-void ChromeClientWx::scrollBackingStore(int dx, int dy, 
-                    const IntRect& scrollViewRect, 
-                    const IntRect& clipRect)
-{
-    notImplemented();
-}
-
-void ChromeClientWx::updateBackingStore()
-{
-    notImplemented();
-}
-
-void ChromeClientWx::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
-{
-    notImplemented();
+  std::cout << "Called ChromeClientWx::platformPageClient()\n";
+  return 0;
+    // return m_webView;
 }
 
 void ChromeClientWx::setToolTip(const String& tip, TextDirection)
 {
     wxToolTip* tooltip = m_webView->GetToolTip();
-    if (!tooltip || tooltip->GetTip() != wxString(tip))
-        m_webView->SetToolTip(tip);
-}
-
-void ChromeClientWx::print(Frame*)
-{
-    notImplemented();
-}
-
-#if ENABLE(DATABASE)
-void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
-{
-    unsigned long long quota = 5 * 1024 * 1024;
-
-    if (wxWebFrame* webFrame = m_webView->GetMainFrame())
-        if (Frame* frame = webFrame->GetFrame())
-            if (Document* document = frame->document())
-                if (!DatabaseTracker::tracker().hasEntryForOrigin(document->securityOrigin()))
-                    DatabaseTracker::tracker().setQuota(document->securityOrigin(), quota);
-}
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void ChromeClientWx::reachedMaxAppCacheSize(int64_t spaceNeeded)
-{
-    notImplemented();
-}
-#endif
-
-void ChromeClientWx::scroll(const IntSize&, const IntRect&, const IntRect&)
-{
-    m_webView->Refresh();
-    notImplemented();
-}
-
-void ChromeClientWx::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
-{
-    notImplemented();
-}
-
-bool ChromeClientWx::setCursor(PlatformCursorHandle)
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientWx::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
-{
-    // See the comment in WebCore/page/ChromeClient.h
-    notImplemented();
+    if (!tooltip || tooltip->GetTip() != wxString((WebString)tip))
+        m_webView->SetToolTip((WebString)tip);
 }
 
 }

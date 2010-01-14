@@ -51,7 +51,6 @@
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
 
-// #include "EditorClientWx.h"
 #include "FrameLoaderClientWx.h"
 
 #include "wx/wxprec.h"
@@ -59,6 +58,7 @@
     #include "wx/wx.h"
 #endif
 
+#include "WebString.h"
 #include "WebFrame.h"
 #include "WebView.h"
 #include "WebFramePrivate.h"
@@ -120,44 +120,28 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
 {
     wxString returnValue = wxEmptyString;
     // TODO - conversion
-    // if (m_impl->frame && m_impl->frame->loader()) {
-    //     bool hasLoaded = m_impl->frame->loader()->frameHasLoaded();
-    //     wxASSERT_MSG(hasLoaded, wxT("Document must be loaded before calling RunScript."));
-    //     if (hasLoaded) {
-    //         WebCore::ScriptController* controller = m_impl->frame->script();
-    //         bool jsEnabled = controller->isEnabled(); 
-    //         wxASSERT_MSG(jsEnabled, wxT("RunScript requires JavaScript to be enabled."));
-    //         if (jsEnabled) {
-    //             JSC::JSValue result = controller->executeScript(javascript, true).jsValue();
-    //             if (result)
-    //                 returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).UTF8String().c_str(), wxConvUTF8);        
-    //         }
-    //     }
-    // }
+    if (m_impl->frame && m_impl->frame->loader()) {
+        bool hasLoaded = m_impl->frame->loader()->frameHasLoaded();
+        wxASSERT_MSG(hasLoaded, wxT("Document must be loaded before calling RunScript."));
+        if (hasLoaded) {
+            WebCore::ScriptController* controller = m_impl->frame->script();
+            bool jsEnabled = controller->isEnabled(); 
+            wxASSERT_MSG(jsEnabled, wxT("RunScript requires JavaScript to be enabled."));
+            if (jsEnabled) {
+                JSC::JSValue result = controller->executeScript((WebString)javascript, true).jsValue();
+                if (result)
+                    returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).UTF8String().c_str(), wxConvUTF8);        
+            }
+        }
+    }
     return returnValue;
 }
 
 void wxWebFrame::LoadURL(const wxString& url)
 {
-    if (m_impl->frame && m_impl->frame->loader()) {
-        // TODO - remove CURL
-        // WebCore::KURL kurl = WebCore::KURL(WebCore::KURL(), url, WebCore::UTF8Encoding());
-        // // NB: This is an ugly fix, but CURL won't load sub-resources if the
-        // // protocol is omitted; sadly, it will not emit an error, either, so
-        // // there's no way for us to catch this problem the correct way yet.
-        // if (kurl.protocol().isEmpty()) {
-        //     // is it a file on disk?
-        //     if (wxFileExists(url)) {
-        //         kurl.setProtocol("file");
-        //         kurl.setPath("//" + kurl.path());
-        //     }
-        //     else {
-        //         kurl.setProtocol("http");
-        //         kurl.setPath("//" + kurl.path());
-        //     }
-        // }
-        // m_impl->frame->loader()->load(kurl, false);
-    }
+  if (m_impl->frame && m_impl->frame->loader()) {
+    m_impl->frame->loader()->load(WebCore::ResourceRequest((WebString)url), false);
+  }
 }
 
 bool wxWebFrame::ShouldClose() const

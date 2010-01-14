@@ -57,6 +57,12 @@ public:
       webkit->LoadURL("file://" + path);
   }
   
+  void LoadURL(wxString url){
+    FREED_RETURN;
+    if(url != wxEmptyString)
+      webkit->LoadURL(url);    
+  }
+  
   void SetChrome(bool flag){
     FREED_RETURN;
     // TODO
@@ -200,6 +206,7 @@ void Init_Bowline_Control(){
      .define_method("disable",          &BowlineControl::Disable)
      .define_method("enable",           &BowlineControl::Enable)
      .define_method("_file=",           &BowlineControl::LoadFile)
+     .define_method("_url=",            &BowlineControl::LoadURL)
      .define_method("id",               &BowlineControl::GetId)
      .define_method("modal",            &BowlineControl::MakeModal, Arg("flag") = true)
      .define_method("name=",            &BowlineControl::SetName)

@@ -50,7 +50,6 @@
 #include "PluginHalterClient.h"
 #include "RenderObject.h"
 #include "RenderView.h"
-#include "ResourceHandleManager.h"
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -63,7 +62,10 @@
 #include "EditorClientWx.h"
 #include "FrameLoaderClientWx.h"
 #include "InspectorClientWx.h"
-#include "EmptyClients.h"
+
+#include "FloatRect.h"
+#include "IntRect.h"
+
 
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
@@ -296,16 +298,16 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
 
     m_impl = new WebViewPrivate();
 
-    WebCore::InitializeLoggingChannelsIfNecessary();    
+    // WebCore::InitializeLoggingChannelsIfNecessary();    
     WebCore::HTMLFrameOwnerElement* parentFrame = 0;
 
     // WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();
     m_impl->page = new WebCore::Page(
-      new WebCore::EmptyChromeClient(), 
-      new WebCore::EmptyContextMenuClient(), 
-      new WebCore::EmptyEditorClient(), 
-      new WebCore::EmptyDragClient(), 
-      new WebCore::EmptyInspectorClient(), 
+      new WebCore::ChromeClientWx(this), 
+      new WebCore::ContextMenuClientWx(), 
+      new WebCore::EditorClientWx(), 
+      new WebCore::DragClientWx(), 
+      new WebCore::InspectorClientWx(), 
       0, 0
     );
     // editorClient->setPage(m_impl->page);
@@ -322,7 +324,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setFixedFontFamily("Courier New");
     settings->setSansSerifFontFamily("Arial");
     settings->setStandardFontFamily("Times New Roman");
-    settings->setJavaScriptEnabled(true);
+    settings->setJavaScriptEnabled(false);
 
 #if ENABLE(DATABASE)
     settings->setDatabasesEnabled(true);
@@ -371,48 +373,42 @@ void wxWebView::LoadURL(const wxString& url)
 void wxWebView::OnPaint(wxPaintEvent& event)
 {
 // // TODO - fix
-//   if (m_beingDestroyed || !m_mainFrame)
-//       return;
-// 
-//   // WebView active state is based on TLW active state.
-//   wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(wxGetTopLevelParent(this));
-//   if (tlw && tlw->IsActive())
-//       m_impl->page->focusController()->setActive(true);
-//   else {
-//       m_impl->page->focusController()->setActive(false);
-//   }
-//   WebCore::Frame* frame = m_mainFrame->GetFrame();
-//   if (!frame || !frame->view())
-//       return;
-//   
-//   wxAutoBufferedPaintDC dc(this);
-// 
-//   if (IsShown() && frame->document()) {
-// // #if USE(WXGC)
-// //     wxGCDC gcdc(dc);
-// // #endif
-// 
-//     if (dc.IsOk()) {
-//       wxRect paintRect = GetUpdateRegion().GetBox();
-// 
-// // #if USE(WXGC)
-// //       WebCore::GraphicsContext gc(&gcdc);
-// // #else
-//       WebCore::GraphicsContext gc(&dc);
-// // #endif
-//       if (frame->contentRenderer()) {
-//         frame->view()->layoutIfNeededRecursive();
-//         frame->view()->paint(&gc, (WebRect)paintRect);
-//       }
-//     }
-//   }
+  if (m_beingDestroyed || !m_mainFrame)
+      return;
+
+  // WebView active state is based on TLW active state.
+  wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(wxGetTopLevelParent(this));
+  if (tlw && tlw->IsActive())
+      m_impl->page->focusController()->setActive(true);
+  else {
+      m_impl->page->focusController()->setActive(false);
+  }
+  WebCore::Frame* frame = m_mainFrame->GetFrame();
+  if (!frame || !frame->view())
+      return;
+  
+  if (IsShown() && frame->document()) {
+
+    wxRect paintRect = GetUpdateRegion().GetBox();
+    
+    wxGCDC gcdc(this);
+    wxGraphicsContext* gc = gcdc.GetGraphicsContext();
+    CGContextRef platformContext = (CGContextRef)gc->GetNativeContext();
+    WebCore::GraphicsContext context(platformContext);
+    
+    if (frame->contentRenderer()) {
+      frame->view()->layoutIfNeededRecursive();
+      frame->view()->paint(&context, (WebRect)paintRect);
+    }
+  }
 }
 
 void wxWebView::OnSize(wxSizeEvent& event)
 { 
     if (m_isInitialized && m_mainFrame) {
         WebCore::Frame* frame = m_mainFrame->GetFrame();
-        frame->view()->setFrameRect((WebRect)wxRect(wxPoint(0,0), event.GetSize()));
+        const WebCore::IntRect position = (WebRect)wxRect(wxPoint(0,0), event.GetSize());
+        frame->view()->setFrameRect(position);
         frame->view()->forceLayout();
         frame->view()->adjustViewSize();
     }

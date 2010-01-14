@@ -24,9 +24,8 @@ libs << "-lwxwebkit"
 # TODO - make configurable
 webkit_path = "/Users/Alex/Downloads/WebKit-r52751/"
 
-wlibs = [`wx-config --libs`.chomp]
-# wlibs += " -framework WebKit"
-# wlibs += " -framework JavaScriptCore"
+wlibs = []
+wlibs << `wx-config --libs`.chomp
 wlibs << "-L."
 wlibs << "-L" + File.join(webkit_path, "WebKitLibraries")
 wlibs << "-L" + File.join(webkit_path, "WebKitLibraries", "unix", "lib")
@@ -37,9 +36,11 @@ wlibs << "-lcurl"
 wlibs << "-lsqlite3"
 wlibs << "-lpng"
 wlibs << "-lxslt"
+wlibs << "-framework CoreFoundation"
 wlibs << "-F."
 wlibs << "-framework JavaScriptCore"
-wlibs << "-framework WebCore"
+# wlibs << "-framework WebCore"
+wlibs << "-framework WebKit"
 
 wincludes = %w{
   JavaScriptCore/wtf/unicode/icu
@@ -113,7 +114,7 @@ wincludes = %w{
   WebCore/platform/graphics/mac
   WebCore/platform/bridge/mac
   WebCore/platform/mac
-  WebCore/platform/network/curl
+  WebCore/platform/network/mac
   WebCore/page/mac
   WebCore
   JavaScriptCore
@@ -140,21 +141,16 @@ wincludes << "/opt/local/include/libxml2" # ?
 wopts = wincludes.map {|inc| "-I#{inc}" }
 
 wopts << "-D__DYNAMIC__" 
-wopts << "-D__DYNAMIC__" 
-wopts << "-DU_DISABLE_RENAMING=1" 
 wopts << "-DPIC"
 wopts << "-DWXMAKINGDLL_WEBKIT" 
-wopts << "-DWTF_USE_CURL" 
+# wopts << "-DWTF_USE_CURL" 
 wopts << "-DWTF_USE_PTHREADS" 
 wopts << "-DWTF_USE_WXGC" 
 wopts << "-DENABLE_DATABASE" 
 wopts << "-DENABLE_XSLT" 
 wopts << "-DENABLE_JAVASCRIPT_DEBUGGER" 
-wopts << "-D_FILE_OFFSET_BITS=64"
 wopts << "-DWXUSINGDLL" 
-wopts << "-D__WXOSX_CARBON__"
 wopts << "-D_FILE_OFFSET_BITS=64"
-wopts << "-DWXUSINGDLL"
 wopts << "-D__WXOSX_CARBON__"
 wopts << "-D__private_extern__=extern"
 
@@ -178,11 +174,15 @@ wopts << "-F/System/Library/Frameworks/ApplicationServices.framework/Frameworks"
 # #-auxbase WebView 
 # -fPIC -feliminate-unused-debug-symbols -fPIC -fPIC
 
-wfiles  = Dir["wxwebkit/*.cpp"]
-wfiles  << "wxwebkit/WebKitSupport/FrameLoaderClientWx.cpp"
+wfiles  = Dir["wxwebkit/*.cpp"] + Dir["wxwebkit/WebKitSupport/*.cpp"]
 wofiles = wfiles.map {|path| path.gsub(/\.cpp$/, ".o") }
 
-vars :CC => "g++", :FLAGS => "-g -Wall", :LIBS => libs, :OPTS => opts, :WOPTS => wopts, :WLIBS => wlibs
+# -Werror
+DEBUG_FLAGS    = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef -Wshorten-64-to-32 -DNDEBUG"
+STANDARD_FLAGS = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -mmacosx-version-min=10.5 -gdwarf-2"
+PRODUCTION_FLAGS = "-DNDEBUG"
+
+vars :CC => "/Developer/usr/bin/g++-4.2", :FLAGS => [STANDARD_FLAGS, DEBUG_FLAGS], :LIBS => libs, :OPTS => opts, :WOPTS => wopts, :WLIBS => wlibs
 
 rule :all, :depends => ["badge_label.o", "main.o"] do
   compile :LIBS, :output => "bowline-desktop"
@@ -207,12 +207,12 @@ rule :wxwebkit, :depends => wofiles do
 end
 
 # TODO - remove
-# rule :test, :depends => "test.o" do
-#   compile :LIBS, :output => "test"
-# end
-# 
-# rule "test.o", :depends => "wxwebkit/test.cpp" do
-#   compile :to_obj, :WOPTS, :$@
-# end
+rule :test, :depends => "test.o" do
+  compile :WLIBS, :$@
+end
+
+rule "test.o", :depends => "test.cpp" do
+  compile :to_obj, :WOPTS, "-O0 -mstackrealign", :$@
+end
 
 clean "*.o", "wxwebkit/*.o", "wxwebkit/WebKitSupport/*.o", "libwxwebkit.dylib", "bowline-desktop"

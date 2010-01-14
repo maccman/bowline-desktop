@@ -27,7 +27,7 @@ Edit WebCore/Configurations/
  Say no to strip code
  Say no to dead code
  Remove umbrella
- Remove visibility-inlines-hidden
+ add __ZNK7WebCore9FrameView13isTransparentEv to WebCore.base.exp
  
  Edit JavaScriptCore/Configurations/
   Remove reference to EXTERNAL_SYMBOLS
@@ -40,3 +40,20 @@ Edit WebKitTools/Scripts/check-for-weak-vtables
  
 Edit WebKitTools/Scripts/build-webkit
  Remove WebKit from projects
+
+
+Changed files:
+WebCore/loader/EmptyClients.h
+WebCore/loader/FrameLoaderClient.h
+WebCore/page/ChromeClient.h
+WebKit/WebKitInclues/WebChromeClient.h
+HTMLParser
+
+
+Current error:
+Program received signal EXC_BAD_ACCESS, Could not access memory.
+Reason: KERN_PROTECTION_FAILURE at address: 0x00000008
+0x01e818b0 in WebCore::FrameView::invalidateRect (this=0x475dda0, rect=@0xbfffdfa8) at /Users/Alex/Downloads/WebKit-r52751/WebCore/page/FrameView.cpp:295
+295	            hostWindow()->repaint(rect, true);
+
+Found error - only happens in functions defined as 'virtual' in Chrome.cpp

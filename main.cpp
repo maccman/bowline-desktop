@@ -36,7 +36,7 @@ IMPLEMENT_APP(App)
 bool App::OnInit()
 {
   window = new BowlineMainWindow();
-  
+
   InitRuby();
   InitBowline();
   
@@ -46,7 +46,7 @@ bool App::OnInit()
     RubyUtils::LogError();
     throw "Ruby Error";
   }
-    
+      
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
   tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
   tickTimer.Start(50);
