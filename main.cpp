@@ -127,12 +127,11 @@ wxString App::ResourcePath(){
   }
 }
 
-
 wxString App::LibPath(){
   wxString path = wxStandardPaths::Get().GetExecutablePath();
 #ifdef __WXMAC__
   // Because GetExecutablePath uese CFBundleCopyBundleURL not CFBundleCopyExecutableURL
-  if(!wxFileExists(path)){
+  if(wxStandardPaths::Get().GetResourcesDir() != path) { // If app is bundled
     path += "/Contents/MacOS";
   }
 #endif

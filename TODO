@@ -4,10 +4,10 @@ Create Windowing API (with Rice):
   
 Get copy/past keyboard shortcuts working
 
+Remove context menu items.
+
 Allow js alerts
 
 Remove TK from Ruby
 
 Implement Chromeless windows
-
-Fix window reload
