@@ -127,7 +127,14 @@ wxString App::ResourcePath(){
   }
 }
 
+
 wxString App::LibPath(){
   wxString path = wxStandardPaths::Get().GetExecutablePath();
+#ifdef __WXMAC__
+  // Because GetExecutablePath uese CFBundleCopyBundleURL not CFBundleCopyExecutableURL
+  if(!wxFileExists(path)){
+    path += "/Contents/MacOS";
+  }
+#endif
   return wxPathname::Join(path, "libs");
 }
