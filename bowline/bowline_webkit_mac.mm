@@ -71,8 +71,8 @@ bool BowlineWebKit::Create(wxWindow *parent,
   m_macIsUserPane = false;                           
   wxControl::Create(parent, winID, pos, size, style, validator, name);
   
-  NSRect r = wxOSXGetFrameForControl(this, pos , size);
-  m_webView = [[WebView alloc] initWithFrame:r frameName:@"webkitFrame" groupName:@"webkitGroup"];
+  NSRect rect = wxOSXGetFrameForControl(this, pos , size);
+  m_webView = [[WebView alloc] initWithFrame:rect frameName:@"webkitFrame" groupName:@"webkitGroup"];
 
   m_peer = new wxWidgetCocoaImpl(this, m_webView);
   MacPostControlCreate(pos, size);

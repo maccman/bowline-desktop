@@ -194,7 +194,7 @@ public:
   
   void ShowInspector(bool console = false){
     FREED_RETURN;
-    // webkit->ShowInspector(console);
+    webkit->ShowInspector(console);
   }
 
 protected:

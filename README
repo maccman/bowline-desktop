@@ -13,7 +13,7 @@ You'll need to statically compile Ruby and wxWidgets:
     ./configure --with-static-linked-ext --program-suffix=19 --prefix=/usr/local
 
   wxWidgets configuration:
-    ./configure --disable-shared
+    ./configure --disable-webkit --disable-shared --with-osx_cocoa
 
 To compile:
 $ ruby ruby2make
