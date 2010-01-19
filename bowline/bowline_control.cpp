@@ -1,13 +1,10 @@
 #ifndef BOWLINE_CONTROL_CPP_F02I8V7L
 #define BOWLINE_CONTROL_CPP_F02I8V7L
 
-#include <wx/frame.h>
-#include "WebViewExternal.h"
-#include <wx/weakref.h>
+#include "bowline_webkit.h"
 
-// Not defined in webkit.h
-// #define wxWebkitBeforeLoadEventHandler(func) \
-//     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebKitBeforeLoadEventFunction, &func)
+#include <wx/frame.h>
+#include <wx/weakref.h>
     
 #define FREED_RETURN if(frame == NULL) return
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
@@ -35,17 +32,17 @@ public:
     menuBar = new wxMenuBar;
     frame->SetMenuBar(menuBar);
     
-    webkit = new wxWebView(frame, wxID_ANY);
-    // webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
+    webkit = new BowlineWebKit(frame, wxID_ANY);
+    webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
 
     LoadFile(path);
   }
   
-  // void OnScript(wxWebKitScriptEvent& evt){
-  //   if(scriptCallback) {
-  //     scriptCallback.call("call", evt.GetData());
-  //   }
-  // }
+  void OnScript(wxWebKitScriptEvent& evt){
+    if(scriptCallback) {
+      scriptCallback.call("call", evt.GetData());
+    }
+  }
   
   void SetScriptCallback(Object proc){
     scriptCallback = proc;
@@ -66,6 +63,16 @@ public:
   void SetChrome(bool flag){
     FREED_RETURN;
     // TODO
+  }
+  
+  void SetSource(wxString source){
+    if(!webkit) return;
+    webkit->SetPageSource(source);
+  }
+  
+  wxString GetSource(){
+    if(!webkit) return wxEmptyString;
+    return webkit->GetPageSource();
   }
 
   wxString RunScript(wxString js){
@@ -192,7 +199,7 @@ public:
 
 protected:
   wxWeakRef<wxFrame> frame;
-  wxWeakRef<wxWebView> webkit;
+  wxWeakRef<BowlineWebKit> webkit;
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
@@ -207,6 +214,8 @@ void Init_Bowline_Control(){
      .define_method("enable",           &BowlineControl::Enable)
      .define_method("_file=",           &BowlineControl::LoadFile)
      .define_method("_url=",            &BowlineControl::LoadURL)
+     .define_method("source",           &BowlineControl::GetSource)
+     .define_method("source=",          &BowlineControl::SetSource)
      .define_method("id",               &BowlineControl::GetId)
      .define_method("modal",            &BowlineControl::MakeModal, Arg("flag") = true)
      .define_method("name=",            &BowlineControl::SetName)

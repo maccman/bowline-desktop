@@ -14,33 +14,11 @@ You'll need to statically compile Ruby and wxWidgets:
 
   wxWidgets configuration:
     ./configure --disable-shared
-    
-Run rake to compile.
 
-
-
-
-Building WebKit on OSX:
-
-Edit WebCore/Configurations/
- Remove reference to EXTERNAL_SYMBOLS
- Say no to strip code
- Say no to dead code
- Remove umbrella
- add __ZNK7WebCore9FrameView13isTransparentEv to WebCore.base.exp
- 
- Edit JavaScriptCore/Configurations/
-  Remove reference to EXTERNAL_SYMBOLS
-  Say no to strip code
-  Say no to dead code
-  Disable ENABLE_DASHBOARD_SUPPORT
- 
-Edit WebKitTools/Scripts/check-for-weak-vtables
- Comment out
- 
-Edit WebKitTools/Scripts/build-webkit
- Remove WebKit from projects
-
+To compile:
+$ ruby ruby2make
+$ make wxwebkit
+$ make
 
 Changed files:
 WebCore/loader/EmptyClients.h
@@ -49,11 +27,51 @@ WebCore/page/ChromeClient.h
 WebKit/WebKitInclues/WebChromeClient.h
 HTMLParser
 
+Patches to push to WebKit:
+* ASSERTION FAILED: !m_deletionHasBegun
+(/Users/Alex/Downloads/WebKit-r52751/WebCore/platform/TreeShared.h:61 void WebCore::TreeShared<T>::deref() [with T = WebCore::Node])
+* Pure virtual methods on FrameLoaderClient and ChromeClient
+* HTMLParser - __dyld_misaligned_stack_error ()
+* Page.cpp Chrome instantiation - http://stackoverflow.com/questions/2049238/inherited-class-invalid-pointer-error-when-calling-virtual-functions
 
-Current error:
-Program received signal EXC_BAD_ACCESS, Could not access memory.
-Reason: KERN_PROTECTION_FAILURE at address: 0x00000008
-0x01e818b0 in WebCore::FrameView::invalidateRect (this=0x475dda0, rect=@0xbfffdfa8) at /Users/Alex/Downloads/WebKit-r52751/WebCore/page/FrameView.cpp:295
-295	            hostWindow()->repaint(rect, true);
 
-Found error - only happens in functions defined as 'virtual' in Chrome.cpp
+Webkit changes:
+_InitWebCoreSystemInterface
+_WebKitInitializeLoggingChannelsIfNecessary
+
+WebCore changes:
+__ZN7WebCore9InlineBox14selectionStateEv
+__ZN7WebCore12UTF8EncodingEv
+__ZN7WebCore5Color11transparentE
+__ZN7WebCore9InlineBox10deleteLineEPNS_11RenderArenaE
+__ZN7WebCore9InlineBox5paintERNS_12RenderObject9PaintInfoEii
+__ZN7WebCore12ChromeClient20populateVisitedLinksEv
+__ZN7WebCore11FrameLoader4stopEv
+__ZN7WebCore12ChromeClient19customHighlightRectEPNS_4NodeERKNS_12AtomicStringERKNS_9FloatRectE
+__ZN7WebCore4KURLC1ERKS0_RKNS_6StringERKNS_12TextEncodingE
+__ZNK7WebCore9FrameView13isTransparentEv
+__ZN7WebCore9InlineBox22canAccommodateEllipsisEbii
+__ZN7WebCore9InlineBox7destroyEPNS_11RenderArenaE
+__ZN7WebCore16ScriptController17canExecuteScriptsEv
+__ZN7WebCore9InlineBox10attachLineEv
+__ZN7WebCore12ChromeClient23generateReplacementFileERKNS_6StringE
+__ZN7WebCore9InlineBox14adjustPositionEii
+__ZNK7WebCore9InlineBox14caretMaxOffsetEv
+__ZNK7WebCore9InlineBox14caretMinOffsetEv
+__ZN7WebCore10StringImpl6createEPKtj
+__ZN7WebCore12ChromeClient23dashboardRegionsChangedEv
+__ZN7WebCore12SharedBufferC1EPKci
+__ZN7WebCore5Frame10createViewERKNS_7IntSizeERKNS_5ColorEbS3_bNS_13ScrollbarModeES7_
+__ZN7WebCore9InlineBoxdlEPvm
+__ZN7WebCore9InlineBox11extractLineEv
+__ZN7WebCore12ChromeClient20paintCustomHighlightEPNS_4NodeERKNS_12AtomicStringERKNS_9FloatRectES8_bb
+__ZN7WebCore9FrameView6layoutEb
+__ZN7WebCore14DocumentLoaderC1ERKNS_15ResourceRequestERKNS_14SubstituteDataE
+__ZNK7WebCore9FrameView13layoutPendingEv
+__ZN7WebCore12ChromeClient39shouldReplaceWithGeneratedFileForUploadERKNS_6StringERS1_
+__ZN7WebCore9InlineBox11nodeAtPointERKNS_14HitTestRequestERNS_13HitTestResultEiiii
+__ZNK7WebCore17FrameLoaderClient11hasHTMLViewEv
+__ZN7WebCore9InlineBox16placeEllipsisBoxEbiiiRb
+__ZN7WebCore4KURLC1ERKS0_RKNS_6StringE
+__ZN7WebCore5Color5whiteE
+__ZNK7WebCore9InlineBox22caretMaxRenderedOffsetEv

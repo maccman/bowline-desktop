@@ -3,3 +3,6 @@ vendor
 script
 *.o
 Makefile
+decrep
+Frameworks
+STATE
