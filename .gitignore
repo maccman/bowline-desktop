@@ -1,8 +1,7 @@
 /bowline-desktop
-vendor
 script
 *.o
 Makefile
 decrep
-Frameworks
 STATE
+libs

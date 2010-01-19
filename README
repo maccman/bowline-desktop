@@ -2,7 +2,8 @@ This project integrates wxWidgets with Ruby and Bowline.
 The public API documentation is in the Bowline project:
   http://github.com/maccman/bowline
 
-* OSX only (for the moment) due to  wx/html/webkit.h
+* OSX only (for the moment)
+  If you feel like implementing bowline_webkit_gtk.cpp, or bowline_webkit_win.cpp go for it!
 * uses wxWidgets 2.9
 * uses Ruby 1.9
 * uses the Rice 1.3.0 gem (http://github.com/jameskilton/rice)
@@ -17,61 +18,4 @@ You'll need to statically compile Ruby and wxWidgets:
 
 To compile:
 $ ruby ruby2make
-$ make wxwebkit
 $ make
-
-Changed files:
-WebCore/loader/EmptyClients.h
-WebCore/loader/FrameLoaderClient.h
-WebCore/page/ChromeClient.h
-WebKit/WebKitInclues/WebChromeClient.h
-HTMLParser
-
-Patches to push to WebKit:
-* ASSERTION FAILED: !m_deletionHasBegun
-(/Users/Alex/Downloads/WebKit-r52751/WebCore/platform/TreeShared.h:61 void WebCore::TreeShared<T>::deref() [with T = WebCore::Node])
-* Pure virtual methods on FrameLoaderClient and ChromeClient
-* HTMLParser - __dyld_misaligned_stack_error ()
-* Page.cpp Chrome instantiation - http://stackoverflow.com/questions/2049238/inherited-class-invalid-pointer-error-when-calling-virtual-functions
-
-
-Webkit changes:
-_InitWebCoreSystemInterface
-_WebKitInitializeLoggingChannelsIfNecessary
-
-WebCore changes:
-__ZN7WebCore9InlineBox14selectionStateEv
-__ZN7WebCore12UTF8EncodingEv
-__ZN7WebCore5Color11transparentE
-__ZN7WebCore9InlineBox10deleteLineEPNS_11RenderArenaE
-__ZN7WebCore9InlineBox5paintERNS_12RenderObject9PaintInfoEii
-__ZN7WebCore12ChromeClient20populateVisitedLinksEv
-__ZN7WebCore11FrameLoader4stopEv
-__ZN7WebCore12ChromeClient19customHighlightRectEPNS_4NodeERKNS_12AtomicStringERKNS_9FloatRectE
-__ZN7WebCore4KURLC1ERKS0_RKNS_6StringERKNS_12TextEncodingE
-__ZNK7WebCore9FrameView13isTransparentEv
-__ZN7WebCore9InlineBox22canAccommodateEllipsisEbii
-__ZN7WebCore9InlineBox7destroyEPNS_11RenderArenaE
-__ZN7WebCore16ScriptController17canExecuteScriptsEv
-__ZN7WebCore9InlineBox10attachLineEv
-__ZN7WebCore12ChromeClient23generateReplacementFileERKNS_6StringE
-__ZN7WebCore9InlineBox14adjustPositionEii
-__ZNK7WebCore9InlineBox14caretMaxOffsetEv
-__ZNK7WebCore9InlineBox14caretMinOffsetEv
-__ZN7WebCore10StringImpl6createEPKtj
-__ZN7WebCore12ChromeClient23dashboardRegionsChangedEv
-__ZN7WebCore12SharedBufferC1EPKci
-__ZN7WebCore5Frame10createViewERKNS_7IntSizeERKNS_5ColorEbS3_bNS_13ScrollbarModeES7_
-__ZN7WebCore9InlineBoxdlEPvm
-__ZN7WebCore9InlineBox11extractLineEv
-__ZN7WebCore12ChromeClient20paintCustomHighlightEPNS_4NodeERKNS_12AtomicStringERKNS_9FloatRectES8_bb
-__ZN7WebCore9FrameView6layoutEb
-__ZN7WebCore14DocumentLoaderC1ERKNS_15ResourceRequestERKNS_14SubstituteDataE
-__ZNK7WebCore9FrameView13layoutPendingEv
-__ZN7WebCore12ChromeClient39shouldReplaceWithGeneratedFileForUploadERKNS_6StringERS1_
-__ZN7WebCore9InlineBox11nodeAtPointERKNS_14HitTestRequestERNS_13HitTestResultEiiii
-__ZNK7WebCore17FrameLoaderClient11hasHTMLViewEv
-__ZN7WebCore9InlineBox16placeEllipsisBoxEbiiiRb
-__ZN7WebCore4KURLC1ERKS0_RKNS_6StringE
-__ZN7WebCore5Color5whiteE
-__ZNK7WebCore9InlineBox22caretMaxRenderedOffsetEv

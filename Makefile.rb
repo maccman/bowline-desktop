@@ -5,8 +5,6 @@ gem 'rice', '>= 1.3.0'
 
 rice_gem = Gem.cache.find_name('rice').first
 
-webkit_dir = "/Users/Alex/Downloads/WebKit-r53371/WebKitBuild/Debug"
-
 includes = []
 includes << RbConfig::CONFIG['rubyhdrdir']
 includes << File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
@@ -14,10 +12,10 @@ includes << File.join(rice_gem.full_gem_path, *%w{ruby lib include})
 
 opts = includes.map {|inc| "-I#{inc}" }
 opts << `wx-config --cxxflags`.chomp
-opts << "-F" + webkit_dir
+opts << "-Flibs"
 
 libs = [`wx-config --libs`.chomp]
-libs << "-F" + webkit_dir
+libs << "-Flibs"
 libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
 libs << "-lrice"

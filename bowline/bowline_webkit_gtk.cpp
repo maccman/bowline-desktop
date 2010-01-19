@@ -21,7 +21,7 @@ bool BowlineWebKit::Create(wxWindow *parent,
 	userAgent.append(cUserAgent);
 	userAgent.append(" Bowline");
 	g_object_set(G_OBJECT(settings), "user-agent", userAgent.c_str(), NULL);
-	
+	// TODO
 }
 
 BowlineWebKit::~BowlineWebKit() { 
