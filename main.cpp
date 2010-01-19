@@ -27,6 +27,7 @@ public:
   void Tick(wxTimerEvent& evt);
   void Idle(wxIdleEvent& evt);
   wxString ResourcePath();
+  wxString LibPath();
   BowlineMainWindow* window;
   wxTimer tickTimer;
 };
@@ -76,8 +77,8 @@ void App::InitRuby(){
   ruby_init();
   ruby_script("bowline");
         
-  wxString resource_path = this->ResourcePath();
-  wxString rubylib_path  = wxPathname::Join(resource_path, "vendor", "rubylib");
+  wxString lib_path      = this->LibPath();
+  wxString rubylib_path  = wxPathname::Join(lib_path, "rubylib");
   
   wxString version  = "1.9.1";
   // TODO - osx specific
@@ -91,6 +92,8 @@ void App::InitRuby(){
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby"));                    // RUBY_VENDOR_LIB
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version));           // RUBY_VENDOR_LIB2
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version, platform)); // RUBY_VENDOR_ARCHLIB
+  
+  wxString resource_path = this->ResourcePath();
   AddLoadPath(resource_path);
   
   Init_prelude();
@@ -122,4 +125,9 @@ wxString App::ResourcePath(){
     wxString path = wxStandardPaths::Get().GetResourcesDir();
     return path;
   }
+}
+
+wxString App::LibPath(){
+  wxString path = wxStandardPaths::Get().GetExecutablePath();
+  return wxPathname::Join(path, "libs");
 }
