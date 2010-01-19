@@ -218,7 +218,7 @@ void BowlineWebKit::ShowInspector(bool console){
 - (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame *)frame 
 {
   BowlineScriptDelegate* myScriptDelegate = [[BowlineScriptDelegate alloc] initWithWxWindow: webKitWindow forFrame: frame];
-  [windowScriptObject setValue:myScriptDelegate forKey:@"app"];
+  [windowScriptObject setValue:myScriptDelegate forKey:@"_app"];
 }
 @end
 
