@@ -21,6 +21,7 @@ public:
                  const wxString& name = wxT("webkitctrl")) {
     m_webView   = NULL;
     m_inspector = NULL;
+
     Create(parent, winID, pos, size, style, validator, name);
   }
   virtual ~BowlineWebKit();
@@ -38,6 +39,10 @@ public:
   void LoadURL(const wxString&);
   wxString RunScript(const wxString&);
   void ShowInspector(bool console);
+  
+  void Cut();
+  void Copy();
+  void Paste();
   
 private:
   

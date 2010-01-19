@@ -71,11 +71,15 @@ bool BowlineWebKit::Create(wxWindow *parent,
   m_macIsUserPane = false;                           
   wxControl::Create(parent, winID, pos, size, style, validator, name);
   
+  SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+  
   NSRect rect = wxOSXGetFrameForControl(this, pos , size);
   m_webView = [[WebView alloc] initWithFrame:rect frameName:@"webkitFrame" groupName:@"webkitGroup"];
 
   m_peer = new wxWidgetCocoaImpl(this, m_webView);
+    
   MacPostControlCreate(pos, size);
+  
   [m_webView setHidden:false];
     
   WebPreferences *m_webPrefs = [[WebPreferences alloc] initWithIdentifier:@"bowline"];
@@ -205,6 +209,17 @@ void BowlineWebKit::ShowInspector(bool console){
   }
 }
 
+void BowlineWebKit::Cut(){
+  
+}
+
+void BowlineWebKit::Copy(){
+  
+}
+
+void BowlineWebKit::Paste(){
+  
+}
 
 @implementation BowlineFrameLoadMonitor
 

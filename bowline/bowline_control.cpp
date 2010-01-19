@@ -9,6 +9,13 @@
 #define FREED_RETURN if(frame == NULL) return
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
 
+enum {
+    ID_CUT = wxID_HIGHEST + 1,
+    ID_COPY,
+    ID_PASTE,
+    ID_REFRESH,
+};
+
 using namespace Rice;
 
 class BowlineControl : public wxEvtHandler
@@ -28,14 +35,43 @@ public:
       wxDefaultPosition, 
       size
     );
-        
-    menuBar = new wxMenuBar;
+    
+    wxMenu *fileMenu = new wxMenu;
+    fileMenu->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
+    
+    wxMenu *editMenu = new wxMenu;
+    editMenu->Append(wxID_CUT, _T("Cut\tCTRL+X"));
+    editMenu->Append(wxID_COPY, _T("Copy\tCTRL+C"));
+    editMenu->Append(wxID_PASTE, _T("Paste\tCTRL+V"));
+    
+    wxMenu *developerMenu = new wxMenu;
+    developerMenu->Append(wxID_REFRESH, _T("Refresh\tCTRL+R"));
+    
+    menuBar = new wxMenuBar();
+    menuBar->Append(fileMenu, _T("&File"));
+    menuBar->Append(editMenu, _T("&Edit"));
+    menuBar->Append(developerMenu, _T("&Developer"));
     frame->SetMenuBar(menuBar);
     
     webkit = new BowlineWebKit(frame, wxID_ANY);
     webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
 
     LoadFile(path);
+  }
+  
+  void OnCut(wxCommandEvent& event)
+  {
+    webkit->Cut();
+  }
+
+  void OnCopy(wxCommandEvent& event)
+  {
+    webkit->Copy();
+  }
+
+  void OnPaste(wxCommandEvent& event)
+  {
+    webkit->Paste();
   }
   
   void OnScript(wxWebKitScriptEvent& evt){
