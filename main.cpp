@@ -112,7 +112,7 @@ void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
   // // There is a Ruby API to do this properly (see RubyGVL),
   // // but it keeps segfaulting on me
   // rb_eval_string_protect("sleep(0.05)", NULL);
-  // rb_eval_string_protect("Bowline::Desktop.idle", NULL);
+  rb_eval_string_protect("Bowline::Desktop.idle", NULL);
 }
 
 wxString App::ResourcePath(){
