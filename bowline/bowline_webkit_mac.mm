@@ -1,6 +1,6 @@
 #include "bowline_webkit.cpp"
 
-#include "wx/osx/private.h"
+#include <wx/osx/private.h>
 #include <WebKit/WebKit.h>
 
 @interface WebInspector : NSObject

@@ -7,14 +7,25 @@ The public API documentation is in the Bowline project:
 * uses wxWidgets 2.9
 * uses Ruby 1.9
 * uses the Rice 1.3.0 gem (http://github.com/jameskilton/rice)
+* i386 architecture 
 
-You'll need to statically compile Ruby and wxWidgets:
+You'll need this enviroment variables before compiling Ruby & wxWidgets:
+
+  arch_flags="-arch i386 -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+  export CFLAGS="$arch_flags "
+  export CXXFLAGS="$arch_flags"
+  export CPPFLAGS="$arch_flags"
+  export LDFLAGS="$arch_flags"
+  export OBJCFLAGS="$arch_flags" 
+  export OBJCXXFLAGS="$arch_flags"
 
   Ruby 1.9.1 configuration:
-    ./configure --with-static-linked-ext --program-suffix=19 --prefix=/usr/local
+    ./configure --with-static-linked-ext --program-suffix=19 --prefix=/usr/local 
 
   wxWidgets configuration:
     ./configure --disable-webkit --disable-shared --with-osx_cocoa --enable-debug_gdb --disable-optimise
+    
+  wxWidgets needs patching on Snow Leopard - see http://trac.wxwidgets.org/ticket/11183
 
 To compile:
 $ ruby ruby2make

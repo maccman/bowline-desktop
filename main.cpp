@@ -82,7 +82,7 @@ void App::InitRuby(){
   
   wxString version  = "1.9.1";
   // TODO - osx specific
-  wxString platform = "i386-darwin9.8.0";
+  wxString platform = "i386-darwin10.2.0";
     
   AddLoadPath(wxPathname::Join(rubylib_path, version));                          // RUBY_LIB
   AddLoadPath(wxPathname::Join(rubylib_path, version, platform));                // RUBY_ARCHLIB
