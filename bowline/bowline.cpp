@@ -8,6 +8,7 @@
 #include "bowline_sound.cpp"
 #include "bowline_dock.cpp"
 #include "bowline_main_window.cpp"
+#include "bowline_path.cpp"
 
 void InitBowline(){
   Init_Bowline_Clipboard();
@@ -20,4 +21,5 @@ void InitBowline(){
   Init_Bowline_Control();
   Init_Bowline_Window();
   Init_Bowline_Main_Window();
+  Init_Bowline_Path();
 }
