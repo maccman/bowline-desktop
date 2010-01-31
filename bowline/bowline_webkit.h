@@ -38,7 +38,7 @@ public:
   
   void LoadURL(const wxString&);
   wxString RunScript(const wxString&);
-  void ShowInspector(bool console);
+  void ShowInspector(bool console = false);
   
   void Cut();
   void Copy();

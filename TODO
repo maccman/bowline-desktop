@@ -13,3 +13,5 @@ Allow js alerts
 Remove TK from Ruby
 
 Implement Chromeless windows
+
+Catch errors when script callback is executed.

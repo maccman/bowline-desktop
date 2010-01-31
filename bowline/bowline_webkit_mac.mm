@@ -183,6 +183,8 @@ wxString BowlineWebKit::RunScript(const wxString& javascript){
   }
   else if ([className isEqualToString:@"WebScriptObject"])
       resultAsString = [result stringRepresentation];
+  else if ([className isEqualToString:@"WebUndefined"])
+      resultAsString = @"";
   else
       fprintf(stderr, "BowlineWebKit::RunScript - Unexpected return type: %s!\n", [className UTF8String]);
       resultAsString = @"";
@@ -257,15 +259,24 @@ void BowlineWebKit::Paste(){
   }
 }
 
+- (void)showInspector
+{
+  if (webKitWindow){
+    webKitWindow->ShowInspector();
+  }
+}
+
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)sel
 {
   if (sel == @selector(call:)) return NO;
+  if (sel == @selector(showInspector:)) return NO;
   return YES;
 }
 
 + (NSString *) webScriptNameForSelector:(SEL)sel
 {
   if (sel == @selector(call:)) return @"call";
+  if (sel == @selector(showInspector:)) return @"showInspector";
   return nil;
 }
 
