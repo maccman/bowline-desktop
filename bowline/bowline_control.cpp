@@ -10,10 +10,8 @@
 #define FREED_RETURN_OBJ(obj) if(frame == NULL) return obj
 
 enum {
-    ID_CUT = wxID_HIGHEST + 1,
-    ID_COPY,
-    ID_PASTE,
-    ID_REFRESH,
+  ID_RELOAD = wxID_HIGHEST + 1,
+  ID_SHOW_INSPECTOR
 };
 
 using namespace Rice;
@@ -44,13 +42,9 @@ public:
     editMenu->Append(wxID_COPY, _T("Copy\tCTRL+C"));
     editMenu->Append(wxID_PASTE, _T("Paste\tCTRL+V"));
     
-    wxMenu *developerMenu = new wxMenu;
-    developerMenu->Append(wxID_REFRESH, _T("Refresh\tCTRL+R"));
-    
     menuBar = new wxMenuBar();
     menuBar->Append(fileMenu, _T("&File"));
     menuBar->Append(editMenu, _T("&Edit"));
-    menuBar->Append(developerMenu, _T("&Developer"));
     frame->SetMenuBar(menuBar);
     
     webkit = new BowlineWebKit(frame, wxID_ANY);
@@ -59,19 +53,40 @@ public:
     LoadFile(path);
   }
   
-  void OnCut(wxCommandEvent& event)
+  void OnExit(wxCommandEvent& WXUNUSED(e)){
+    wxTheApp->GetTopWindow()->Close(false);
+  }
+  
+  void OnCut(wxCommandEvent& WXUNUSED(e))
   {
+    FREED_RETURN;
     webkit->Cut();
   }
 
-  void OnCopy(wxCommandEvent& event)
+  void OnCopy(wxCommandEvent& WXUNUSED(e))
   {
+    FREED_RETURN;
     webkit->Copy();
   }
 
-  void OnPaste(wxCommandEvent& event)
+  void OnPaste(wxCommandEvent& WXUNUSED(e))
   {
+    FREED_RETURN;
     webkit->Paste();
+  }
+  
+  void Reload(){
+    FREED_RETURN;
+    webkit->Reload();
+  }
+  
+  void OnReload(wxCommandEvent& WXUNUSED(e))
+  {
+    Reload();
+  }
+  
+  void OnShowInspector(wxCommandEvent& WXUNUSED(e)){
+    ShowInspector();
   }
   
   void OnScript(wxWebKitScriptEvent& evt){
@@ -82,6 +97,13 @@ public:
   
   void SetScriptCallback(Object proc){
     scriptCallback = proc;
+  }
+  
+  void EnableDeveloper(){
+    wxMenu *developerMenu = new wxMenu;
+    developerMenu->Append(ID_RELOAD, _T("Reload\tCTRL+R"));
+    developerMenu->Append(ID_SHOW_INSPECTOR, _T("Show Inspector\tCTRL+I"));
+    menuBar->Append(developerMenu, _T("&Developer"));
   }
   
   void LoadFile(wxString path){
@@ -234,11 +256,22 @@ public:
   }
 
 protected:
+  DECLARE_EVENT_TABLE()
+  
   wxWeakRef<wxFrame> frame;
   wxWeakRef<BowlineWebKit> webkit;
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
+
+BEGIN_EVENT_TABLE(BowlineControl, wxEvtHandler)
+	EVT_MENU(wxID_EXIT,  BowlineControl::OnExit)
+	EVT_MENU(wxID_CUT,   BowlineControl::OnCut)
+	EVT_MENU(wxID_COPY,  BowlineControl::OnCopy)
+	EVT_MENU(wxID_PASTE, BowlineControl::OnPaste)
+	EVT_MENU(ID_RELOAD,  BowlineControl::OnReload)
+	EVT_MENU(ID_SHOW_INSPECTOR, BowlineControl::OnShowInspector)
+END_EVENT_TABLE()
 
 void Init_Bowline_Control(){
   Class rb_cBowlineControl= 
@@ -248,6 +281,7 @@ void Init_Bowline_Control(){
      .define_method("chrome=",          &BowlineControl::SetChrome)
      .define_method("disable",          &BowlineControl::Disable)
      .define_method("enable",           &BowlineControl::Enable)
+     .define_method("enable_developer", &BowlineControl::EnableDeveloper)
      .define_method("_file=",           &BowlineControl::LoadFile)
      .define_method("_url=",            &BowlineControl::LoadURL)
      .define_method("source",           &BowlineControl::GetSource)
@@ -257,6 +291,7 @@ void Init_Bowline_Control(){
      .define_method("name=",            &BowlineControl::SetName)
      .define_method("run_script",       &BowlineControl::RunScript)
      .define_method("raise",            &BowlineControl::Raise)
+     .define_method("reload",           &BowlineControl::Reload)
      .define_method("show",             &BowlineControl::Show)
      .define_method("hide",             &BowlineControl::Hide)
      .define_method("set_size",         &BowlineControl::SetSize)

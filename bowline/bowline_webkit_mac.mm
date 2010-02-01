@@ -60,6 +60,15 @@ inline NSString* wxNSStringWithWxString(const wxString &wxstring)
 
 @end
 
+@interface BowlineUIDelegate : NSObject
+{
+    BowlineWebKit* webKitWindow;
+}
+
+- initWithWxWindow: (BowlineWebKit*)inWindow;
+
+@end
+
 
 bool BowlineWebKit::Create(wxWindow *parent,
                            wxWindowID winID,
@@ -108,11 +117,13 @@ bool BowlineWebKit::Create(wxWindow *parent,
   BowlineFrameLoadMonitor* myFrameLoadMonitor = [[BowlineFrameLoadMonitor alloc] initWithWxWindow: this];
   [m_webView setFrameLoadDelegate:myFrameLoadMonitor];
 
-  // this is used to veto page loads, etc.
+  // This is used to veto page loads, etc.
   BowlinePolicyDelegate* myPolicyDelegate = [[BowlinePolicyDelegate alloc] initWithWxWindow: this];
   [m_webView setPolicyDelegate:myPolicyDelegate];
   
-  // TODO - WebUIDelegate
+  // This is used for alerts, context menus etc
+  BowlineUIDelegate* myUIDelegate = [[BowlineUIDelegate alloc] initWithWxWindow: this];
+  [m_webView setUIDelegate:myUIDelegate];
   
   [m_webView setApplicationNameForUserAgent:@"Bowline"];
   // [m_webView registerURLSchemeAsLocal:@"app"];
@@ -212,15 +223,19 @@ void BowlineWebKit::ShowInspector(bool console){
 }
 
 void BowlineWebKit::Cut(){
-  
+  [m_webView cut];
 }
 
 void BowlineWebKit::Copy(){
-  
+  [m_webView copy];
 }
 
 void BowlineWebKit::Paste(){
-  
+  [m_webView paste];
+}
+
+void BowlineWebKit::Reload(){
+  [m_webView reload];
 }
 
 @implementation BowlineFrameLoadMonitor
@@ -304,4 +319,71 @@ void BowlineWebKit::Paste(){
 {
   [listener ignore];
 }
+@end
+
+@implementation BowlineUIDelegate
+
+- initWithWxWindow: (BowlineWebKit*)inWindow
+{
+  [super init];
+  webKitWindow = inWindow;
+  return self;
+}
+
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems 
+{
+  NSMutableArray *webViewMenuItems = [[defaultMenuItems mutableCopy] autorelease];
+
+  if (webViewMenuItems)
+  {
+    NSEnumerator *itemEnumerator = [defaultMenuItems objectEnumerator];
+    NSMenuItem *menuItem = nil;
+    while ((menuItem = [itemEnumerator nextObject]))
+    {
+      NSInteger tag = [menuItem tag];
+
+      switch (tag)
+      {
+        case WebMenuItemTagOpenLinkInNewWindow:
+        case WebMenuItemTagDownloadLinkToDisk:
+        case WebMenuItemTagCopyLinkToClipboard:
+        case WebMenuItemTagOpenImageInNewWindow:
+        case WebMenuItemTagDownloadImageToDisk:
+        case WebMenuItemTagCopyImageToClipboard:
+        case WebMenuItemTagOpenFrameInNewWindow:
+        case WebMenuItemTagGoBack:
+        case WebMenuItemTagGoForward:
+        case WebMenuItemTagStop:
+        case WebMenuItemTagReload:
+        case WebMenuItemTagOpenWithDefaultApplication:
+          [webViewMenuItems removeObjectIdenticalTo: menuItem];
+      }
+    }
+  }
+
+  return webViewMenuItems;
+}
+
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+  wxMessageBox(wxStringWithNSString(message), wxT("JavaScript Alert"), wxOK);
+}
+
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+  wxMessageDialog dialog(NULL, wxStringWithNSString(message), wxT("JavaScript Confirm"), wxYES_NO);
+  dialog.Centre();
+  return(dialog.ShowModal() == wxID_YES);
+}
+
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
+{
+  wxTextEntryDialog dialog(NULL, wxStringWithNSString(prompt), wxT("JavaScript Prompt"), wxEmptyString, wxOK | wxCANCEL);
+  dialog.Centre();
+  if (dialog.ShowModal() == wxID_OK) {
+    return wxNSStringWithWxString((wxString) dialog.GetValue());
+  }
+  return nil;
+}
+
 @end

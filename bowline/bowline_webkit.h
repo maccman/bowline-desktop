@@ -43,6 +43,7 @@ public:
   void Cut();
   void Copy();
   void Paste();
+  void Reload();
   
 private:
   
