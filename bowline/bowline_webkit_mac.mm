@@ -2,6 +2,7 @@
 
 #include <wx/osx/private.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebUIDelegatePrivate.h>
 
 @interface WebInspector : NSObject
 {
@@ -354,8 +355,10 @@ void BowlineWebKit::Reload(){
         case WebMenuItemTagGoBack:
         case WebMenuItemTagGoForward:
         case WebMenuItemTagStop:
-        case WebMenuItemTagReload:
         case WebMenuItemTagOpenWithDefaultApplication:
+        // TODO - use for non-developer env
+        // case WebMenuItemTagReload:
+        // case WebMenuItemTagInspectElement:
           [webViewMenuItems removeObjectIdenticalTo: menuItem];
       }
     }
