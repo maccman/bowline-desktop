@@ -51,10 +51,10 @@ public:
   void Copy();
   void Paste();
   void Reload();
+    
+private:
   
   bool developer;
-  
-private:
   
 #ifdef __WXOSX_COCOA__
   struct objc_object *m_webView;
