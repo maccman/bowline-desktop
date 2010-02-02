@@ -21,6 +21,7 @@ public:
                  const wxString& name = wxT("webkitctrl")) {
     m_webView   = NULL;
     m_inspector = NULL;
+    developer   = false;
 
     Create(parent, winID, pos, size, style, validator, name);
   }
@@ -39,11 +40,19 @@ public:
   void LoadURL(const wxString&);
   wxString RunScript(const wxString&);
   void ShowInspector(bool console = false);
+  void EnableDeveloper() {
+    developer = true;
+  }
+  bool EnabledDeveloper() {
+    return developer;
+  }
   
   void Cut();
   void Copy();
   void Paste();
   void Reload();
+  
+  bool developer;
   
 private:
   

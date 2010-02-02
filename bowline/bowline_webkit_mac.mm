@@ -342,6 +342,14 @@ void BowlineWebKit::Reload(){
     while ((menuItem = [itemEnumerator nextObject]))
     {
       NSInteger tag = [menuItem tag];
+      
+      if ( !webKitWindow->EnabledDeveloper() ){
+        switch (tag) {
+          case WebMenuItemTagReload:
+          case WebMenuItemTagInspectElement:
+            [webViewMenuItems removeObjectIdenticalTo: menuItem];
+        }
+      }
 
       switch (tag)
       {
@@ -356,9 +364,6 @@ void BowlineWebKit::Reload(){
         case WebMenuItemTagGoForward:
         case WebMenuItemTagStop:
         case WebMenuItemTagOpenWithDefaultApplication:
-        // TODO - use for non-developer env
-        // case WebMenuItemTagReload:
-        // case WebMenuItemTagInspectElement:
           [webViewMenuItems removeObjectIdenticalTo: menuItem];
       }
     }

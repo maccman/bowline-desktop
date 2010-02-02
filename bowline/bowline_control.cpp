@@ -100,10 +100,12 @@ public:
   }
   
   void EnableDeveloper(){
+    FREED_RETURN;
     wxMenu *developerMenu = new wxMenu;
     developerMenu->Append(ID_RELOAD, _T("Reload\tCTRL+R"));
     developerMenu->Append(ID_SHOW_INSPECTOR, _T("Show Inspector\tCTRL+I"));
     menuBar->Append(developerMenu, _T("&Developer"));
+    webkit->EnableDeveloper();
   }
   
   void LoadFile(wxString path){
