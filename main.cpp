@@ -66,9 +66,7 @@ bool App::OnInit()
 int App::OnExit()
 {
   tickTimer.Stop();
-  // TODO cleaning up Ruby causes a segfault, 
-  // probably because the tickTimer is still executing
-  // ruby_finalize();
+  ruby_finalize();
   return 0;
 }
 
