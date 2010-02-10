@@ -120,9 +120,12 @@ public:
       webkit->LoadURL(url);    
   }
   
+  // TODO - Only works when you set these style flags on creation
   void SetChrome(bool flag){
-    FREED_RETURN;
-    // TODO
+    // FREED_RETURN;
+    // if( !flag ) {
+    //   frame->SetWindowStyle(wxBORDER_NONE|wxFRAME_NO_TASKBAR);
+    // }
   }
   
   void SetSource(wxString source){

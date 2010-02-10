@@ -11,11 +11,16 @@ namespace :libs do
   end
 
   task :change do
+    webkit_dir = ENV["WEBKIT_DIR"] || "/Volumes/Data/WebKit/53765/10.6/"
+    
     libs = %w{ JavaScriptCore JavaScriptGlue WebCore WebKit }
     libs.each do |lib|
+      
+      puts "Changing #{webkit_dir}/#{lib}.framework"
+      
       (libs - [lib]).each do |other|
         `install_name_tool -change \
-          /Volumes/Data/WebKit/53765/10.6/#{other}.framework/Versions/A/#{other} \
+          #{webkit_dir}/#{other}.framework/Versions/A/#{other} \
           @executable_path/libs/#{other}.framework/Versions/A/#{other} \
           libs/#{lib}.framework/Versions/A/#{lib}`
       end
