@@ -2,13 +2,7 @@ Create Windowing API (with Rice):
   Add Menus
   Context Menu?
   
-Get copy/past keyboard shortcuts working.
-
 Fix onMouseOver events.
-
-Remove context menu items.
-
-Allow js alerts
 
 Remove TK from Ruby
 
