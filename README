@@ -40,6 +40,11 @@ Optional:
 
   Building WebKit for 10.6:
     ./WebKitTools/Scripts/build-webkit --32-bit
+    
+  Then move all the WebKit frameworks (in WebKitBuild/Release) to a folder inside bowline-desktop called "libs".
+  Then run:  
+    rake libs:id
+    WEBKIT_PATH=/path/to/webkit rake libs:change
 
 To compile:
 $ ruby ruby2make
