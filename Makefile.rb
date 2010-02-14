@@ -41,7 +41,12 @@ PRODUCTION_FLAGS = "-DNDEBUG"
 
 vars :CC => "g++", :FLAGS => [DEBUG_FLAGS, STANDARD_FLAGS], :LIBS => libs, :OPTS => opts
 
-rule :all, :depends => ["badge_label.o", "bowline_webkit.o", "main.o"] do
+all_depends = []
+all_depends << "badge_label.o" if osx?
+all_depends << "bowline_webkit.o"
+all_depends << "main.o"
+
+rule :all, :depends => all_depends do
   compile :LIBS, :output => "bowline-desktop"
   echo "Done compiling, run ./bowline-desktop"
 end
