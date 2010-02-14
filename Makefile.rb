@@ -1,13 +1,18 @@
 raise "Only supports Ruby 1.9.1" if RUBY_VERSION !~ /^1\.9/
 
-require 'rbconfig'
-# gem 'rice', '>= 1.3.0'
+require "bowline/desktop/platform"
+include Bowline::Desktop::Platform
 
-# rice_gem = Gem.cache.find_name('rice').first
+require "rbconfig"
+gem "rice", ">= 1.3.0"
+
+rice_gem = Gem.cache.find_name("rice").first
 
 includes = []
 includes << RbConfig::CONFIG['rubyhdrdir']
 includes << File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
+includes << File.join(rice_gem.full_gem_path, *%w{ruby lib include})
+includes << "webkit"
 includes << "."
 
 opts = includes.map {|inc| "-I#{inc}" }
@@ -21,8 +26,13 @@ libs << "-Flibs"
 libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L."
 libs << "-lrice"
-libs << "-framework JavaScriptCore"
-libs << "-framework WebKit"
+
+if osx?
+  libs << "-framework JavaScriptCore"
+  libs << "-framework WebKit"
+else
+  libs << "-lwebkit"
+end
 
 DEBUG_FLAGS      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef -Wshorten-64-to-32"
 STANDARD_FLAGS   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
