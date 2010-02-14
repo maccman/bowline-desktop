@@ -3,6 +3,7 @@ Create Windowing API (with Rice):
   Context Menu?
   
 Fix onMouseOver events.
+Get the menu events working.
 
 Remove TK from Ruby
 

@@ -19,6 +19,10 @@ using namespace Rice;
 class BowlineControl : public wxEvtHandler
 {
 public:
+  BowlineControl () {
+    BowlineControl(NULL);
+  }
+  
   BowlineControl (
     wxWindow* parent,
     const wxString path = wxEmptyString, 
@@ -33,17 +37,13 @@ public:
       wxDefaultPosition, 
       size
     );
-    
-    wxMenu *fileMenu = new wxMenu;
-    fileMenu->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
-    
+        
     wxMenu *editMenu = new wxMenu;
     editMenu->Append(wxID_CUT, _T("Cut\tCTRL+X"));
     editMenu->Append(wxID_COPY, _T("Copy\tCTRL+C"));
     editMenu->Append(wxID_PASTE, _T("Paste\tCTRL+V"));
     
     menuBar = new wxMenuBar();
-    menuBar->Append(fileMenu, _T("&File"));
     menuBar->Append(editMenu, _T("&Edit"));
     frame->SetMenuBar(menuBar);
     
@@ -230,9 +230,9 @@ public:
     frame->Raise();
   }
   
-  void SetName(wxString name){
+  void SetTitle(wxString title){
     FREED_RETURN;
-    frame->SetName(name);
+    frame->SetTitle(title);
   }
   
   void SetMinSize(int x, int y){
@@ -261,6 +261,7 @@ public:
   }
 
 protected:
+  DECLARE_DYNAMIC_CLASS(BowlineControl)
   DECLARE_EVENT_TABLE()
   
   wxWeakRef<wxFrame> frame;
@@ -268,6 +269,8 @@ protected:
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
+
+IMPLEMENT_DYNAMIC_CLASS(BowlineControl, wxEvtHandler)
 
 BEGIN_EVENT_TABLE(BowlineControl, wxEvtHandler)
 	EVT_MENU(wxID_EXIT,  BowlineControl::OnExit)
@@ -293,7 +296,7 @@ void Init_Bowline_Control(){
      .define_method("source=",          &BowlineControl::SetSource)
      .define_method("id",               &BowlineControl::GetId)
      .define_method("modal",            &BowlineControl::MakeModal, Arg("flag") = true)
-     .define_method("name=",            &BowlineControl::SetName)
+     .define_method("title=",           &BowlineControl::SetTitle)
      .define_method("run_script",       &BowlineControl::RunScript)
      .define_method("raise",            &BowlineControl::Raise)
      .define_method("reload",           &BowlineControl::Reload)
