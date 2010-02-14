@@ -59,10 +59,20 @@ rule "badge_label.o", :depends => ["bowline/badge_label.h", "bowline/badge_label
   compile :to_obj, :OPTS, :$@
 end
 
-rule "bowline_webkit.o", :depends => [
-  "bowline/bowline_webkit.h", 
-  "bowline/bowline_webkit_mac.mm"
-] do
+bowline_webkit_depends = []
+bowline_webkit_depends << "bowline/bowline_webkit.h"
+
+bowline_webkit_depends << begin
+  case type
+  when :osx   then "bowline/bowline_webkit_mac.mm"
+  when :linux then "bowline/bowline_webkit_gtk.cpp"
+  when :win   then "bowline/bowline_webkit_win.cpp"
+  else
+    raise "Unknown platform"
+  end
+end
+
+rule "bowline_webkit.o", :depends => bowline_webkit_depends do
   compile :to_obj, :OPTS, :$@
 end
 
