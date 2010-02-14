@@ -1,7 +1,8 @@
 raise "Only supports Ruby 1.9.1" if RUBY_VERSION !~ /^1\.9/
 
-require "bowline/desktop/platform"
-include Bowline::Desktop::Platform
+gem "bowline"
+require "bowline/platform"
+include Bowline::Platform
 
 require "rbconfig"
 gem "rice", ">= 1.3.0"
