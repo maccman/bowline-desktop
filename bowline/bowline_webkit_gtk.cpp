@@ -58,5 +58,17 @@ wxString BowlineWebKit::RunScript(const wxString& javascript){
   return wxEmptyString;
 }
 
-void wxWebKitCtrl::ShowInspector(bool console){
+void BowlineWebKit::ShowInspector(bool console){
+}
+
+void BowlineWebKit::Cut(){
+}
+
+void BowlineWebKit::Copy(){
+}
+
+void BowlineWebKit::Paste(){
+}
+
+void BowlineWebKit::Reload(){
 }
