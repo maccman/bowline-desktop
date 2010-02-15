@@ -22,16 +22,34 @@ bool BowlineWebKit::Create(wxWindow *parent,
     return false;
   }
   
-  m_webView = webkit_web_view_new();
+  m_webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
   g_object_ref(m_webView);
   
+  // g_object_connect(G_OBJECT(m_webView),
+  //    "signal::window-object-cleared",
+  //    G_CALLBACK(WindowObjectClearedCallback), this,
+  //    "signal::new-window-policy-decision-requested",
+  //    G_CALLBACK(NewWindowPolicyDecisionCallback), this,
+  //    "signal::populate-popup",
+  //    G_CALLBACK(PopulatePopupCallback), this,
+  //    "signal::create-web-view",
+  //    G_CALLBACK(CreateWebViewCallback), this,
+  //    "signal::script-alert",
+  //    G_CALLBACK(ScriptAlertCallback), this->gtkWindow,
+  //    "signal::script-confirm",
+  //    G_CALLBACK(ScriptConfirmCallback), this->gtkWindow,
+  //    "signal::script-prompt",
+  //    G_CALLBACK(ScriptPromptCallback), this->gtkWindow,
+  //    NULL);
+	
+
   //   WebKitWebSettings* settings = webkit_web_settings_new();
   // g_object_set(G_OBJECT(settings), 
   //  "enable-developer-extras", TRUE,
   //  "enable-universal-access-from-file-uris", TRUE,
   //  "javascript-can-open-windows-automatically", FALSE,
   //  NULL);
-  // webkit_web_view_set_settings(WEBKIT_WEB_VIEW(m_webView), settings);
+  // webkit_web_view_set_settings(m_webView, settings);
   // 
   // const char* cUserAgent = 0;
   // g_object_get(G_OBJECT(settings), "user-agent", &cUserAgent, NULL);
