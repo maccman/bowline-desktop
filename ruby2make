@@ -72,8 +72,9 @@ class Makefile
             r.comments.each { |c| fp.write "# #{c}\n" }
             fp.write "#{r.name}: #{r.dependencies.join ' '}\n"
             r.compilations.each do |d|
-                fp.write "\t#{d[:c]} $(FLAGS) #{d[:flags]}"
-                fp.write " #{d[:i]} #{d[:o]}\n"
+                fp.write "\t#{d[:c]} #{d[:i]}"
+                fp.write " $(FLAGS) #{d[:flags]}"
+                fp.write " #{d[:o]}\n"
             end
             r.shells.each do |cmd|
                 fp.write "\t#{cmd}\n"
