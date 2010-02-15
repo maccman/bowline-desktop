@@ -1,4 +1,12 @@
+#include "wx/wxprec.h"
+#include "wx/splitter.h"
+
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+#endif
+
 #include "bowline_webkit.cpp"
+#include "webkit/webkitwebview.h"
 
 bool BowlineWebKit::Create(wxWindow *parent,
                            wxWindowID winID,
@@ -43,7 +51,7 @@ bool BowlineWebKit::Create(wxWindow *parent,
 BowlineWebKit::~BowlineWebKit() { 
 }
 
-void BowlineWebKit::SetPageSource(const wxString& source){
+void BowlineWebKit::SetPageSource(const wxString& source, const wxString& baseUrl){
 }
 
 wxString BowlineWebKit::GetPageSource(){
@@ -51,7 +59,7 @@ wxString BowlineWebKit::GetPageSource(){
 }
 
 void BowlineWebKit::LoadURL(const wxString& url){
-  webkit_web_view_load_uri(WEBKIT_WEB_VIEW(m_webView), url);
+  webkit_web_view_load_uri(m_webView, url);
 }
 
 wxString BowlineWebKit::RunScript(const wxString& javascript){

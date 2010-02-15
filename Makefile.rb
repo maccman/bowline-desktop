@@ -13,7 +13,7 @@ includes = []
 includes << RbConfig::CONFIG['rubyhdrdir']
 includes << File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
 includes << File.join(rice_gem.full_gem_path, *%w{ruby lib include})
-includes << "webkit"
+includes << "/usr/local/include/webkit-1.0"
 includes << "."
 
 opts = includes.map {|inc| "-I#{inc}" }

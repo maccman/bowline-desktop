@@ -20,7 +20,9 @@ public:
                  const wxValidator& validator = wxDefaultValidator,
                  const wxString& name = wxT("webkitctrl")) {
     m_webView   = NULL;
+#ifdef __WXOSX_COCOA__
     m_inspector = NULL;
+#endif
     developer   = false;
 
     Create(parent, winID, pos, size, style, validator, name);
