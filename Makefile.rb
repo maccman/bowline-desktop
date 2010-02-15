@@ -17,12 +17,12 @@ includes << "."
 
 opts = includes.map {|inc| "-I#{inc}" }
 opts << `wx-config --cxxflags`.chomp
-opts << `pkg-config --cflags webkit-1.0` if linux?
+opts << `pkg-config --cflags webkit-1.0`.chomp if linux?
 opts << "-Flibs"
 
 libs = []
 libs << `wx-config --libs`.chomp
-libs << `pkg-config --libs webkit-1.0` if linux?
+libs << `pkg-config --libs webkit-1.0`.chomp if linux?
 libs << "-Flibs"
 libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L."
