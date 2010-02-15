@@ -36,7 +36,7 @@ else
 end
 
 debug_flags      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
-standard_flags   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
+standard_flags   = "-fmessage-length=0 -Wno-trigraphs -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
 
 if osx?
   standard_flags += " -arch i386 -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
