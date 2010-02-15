@@ -35,16 +35,16 @@ else
   libs << "-lwebkit"
 end
 
-DEBUG_FLAGS      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
-STANDARD_FLAGS   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
+debug_flags      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
+standard_flags   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
 
 if osx?
-  STANDARD_FLAGS += " -arch i386 -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+  standard_flags += " -arch i386 -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
 else
-  STANDARD_FLAGS += " -march=i386"
+  standard_flags += " -march=i386"
 end
 
-vars :CC => "g++", :FLAGS => [DEBUG_FLAGS, STANDARD_FLAGS], :LIBS => libs, :OPTS => opts
+vars :CC => "g++", :FLAGS => [debug_flags, standard_flags], :LIBS => libs, :OPTS => opts
 
 all_depends = []
 all_depends << "badge_label.o" if osx?
