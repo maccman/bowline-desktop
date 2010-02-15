@@ -13,16 +13,16 @@ includes = []
 includes << RbConfig::CONFIG['rubyhdrdir']
 includes << File.join(RbConfig::CONFIG['rubyhdrdir'], RUBY_PLATFORM)
 includes << File.join(rice_gem.full_gem_path, *%w{ruby lib include})
-includes << "/usr/local/include/webkit-1.0"
 includes << "."
 
 opts = includes.map {|inc| "-I#{inc}" }
 opts << `wx-config --cxxflags`.chomp
+opts << `pkg-config --cflags webkit-1.0` if linux?
 opts << "-Flibs"
 
 libs = []
 libs << `wx-config --libs`.chomp
-
+libs << `pkg-config --libs webkit-1.0` if linux?
 libs << "-Flibs"
 libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L."
