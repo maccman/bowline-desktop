@@ -35,9 +35,14 @@ else
   libs << "-lwebkit"
 end
 
-DEBUG_FLAGS      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef -Wshorten-64-to-32"
-STANDARD_FLAGS   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
-PRODUCTION_FLAGS = "-DNDEBUG"
+DEBUG_FLAGS      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
+STANDARD_FLAGS   = "-arch i386 -fmessage-length=0 -Wno-trigraphs -fpascal-strings -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
+
+if osx?
+  STANDARD_FLAGS += " -arch i386 -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+else
+  STANDARD_FLAGS += " -march=i386"
+end
 
 vars :CC => "g++", :FLAGS => [DEBUG_FLAGS, STANDARD_FLAGS], :LIBS => libs, :OPTS => opts
 
