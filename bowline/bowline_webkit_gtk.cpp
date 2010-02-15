@@ -6,7 +6,6 @@
 #endif
 
 #include "bowline_webkit.cpp"
-#include "webkit/webkitwebview.h"
 
 bool BowlineWebKit::Create(wxWindow *parent,
                            wxWindowID winID,
@@ -22,8 +21,8 @@ bool BowlineWebKit::Create(wxWindow *parent,
     return false;
   }
   
-  m_webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-  g_object_ref(m_webView);
+  m_widget = webkit_web_view_new();
+  g_object_ref(m_widget);
   
   // g_object_connect(G_OBJECT(m_webView),
   //    "signal::window-object-cleared",
@@ -77,7 +76,7 @@ wxString BowlineWebKit::GetPageSource(){
 }
 
 void BowlineWebKit::LoadURL(const wxString& url){
-  webkit_web_view_load_uri(m_webView, url);
+  webkit_web_view_load_uri(WEBKIT_WEB_VIEW(m_widget), url);
 }
 
 wxString BowlineWebKit::RunScript(const wxString& javascript){
@@ -97,4 +96,19 @@ void BowlineWebKit::Paste(){
 }
 
 void BowlineWebKit::Reload(){
+}
+
+void BowlineWebKit::DoApplyWidgetStyle(GtkRcStyle *style)
+{
+    gtk_widget_modify_style(m_widget, style);
+}
+
+//GdkWindow *BowlineWebKit::GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const
+//{
+//    return WEBKIT_WEB_VIEW(m_webView)->window;
+//}
+
+wxSize BowlineWebKit::DoGetBestSize() const
+{
+    return wxControl::DoGetBestSize();
 }

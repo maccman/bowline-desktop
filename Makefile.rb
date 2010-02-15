@@ -16,24 +16,27 @@ includes << File.join(rice_gem.full_gem_path, *%w{ruby lib include})
 includes << "."
 
 opts = includes.map {|inc| "-I#{inc}" }
-opts << `wx-config --cxxflags`.chomp
-opts << `pkg-config --cflags webkit-1.0`.chomp if linux?
+opts << "`wx-config --cxxflags`"
+opts << "`pkg-config --cflags webkit-1.0`" if linux?
 opts << "-Flibs"
 
 libs = []
-libs << `wx-config --libs`.chomp
-libs << `pkg-config --libs webkit-1.0`.chomp if linux?
-libs << "-Flibs"
-libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
-libs << "-L."
-libs << "-lrice"
 
+# Dynamic libs
+libs << "`pkg-config --libs webkit-1.0`" if linux?
+libs << "-Flibs"
+libs << "-L."
+libs << "-lcrypt" if linux?
 if osx?
   libs << "-framework JavaScriptCore"
   libs << "-framework WebKit"
-else
-  libs << "-lwebkit"
 end
+
+# Static libs
+libs << "`wx-config --libs`"
+libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
+libs << "-L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
+libs << "-lrice"
 
 debug_flags      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
 standard_flags   = "-fmessage-length=0 -Wno-trigraphs -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"

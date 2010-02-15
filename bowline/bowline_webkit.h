@@ -2,10 +2,7 @@
 #define WEBKIT_H_UHFR9WO4
 
 #include <wx/window.h>
-
-#ifdef __WXGTK__
-class WebKitWebView;
-#endif
+#include <webkit/webkitwebview.h>
 
 class BowlineWebKit : public wxControl
 {
@@ -19,8 +16,8 @@ public:
                  const wxSize& size = wxDefaultSize, long style = 0,
                  const wxValidator& validator = wxDefaultValidator,
                  const wxString& name = wxT("webkitctrl")) {
-    m_webView   = NULL;
 #ifdef __WXOSX_COCOA__
+    m_webView   = NULL;
     m_inspector = NULL;
 #endif
     developer   = false;
@@ -54,6 +51,14 @@ public:
   void Paste();
   void Reload();
     
+    
+protected:
+#ifdef __WXGTK__
+  virtual wxSize DoGetBestSize() const;
+  virtual void DoApplyWidgetStyle(GtkRcStyle *style);
+  //virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
+#endif
+    
 private:
   
   bool developer;
@@ -61,10 +66,6 @@ private:
 #ifdef __WXOSX_COCOA__
   struct objc_object *m_webView;
   struct objc_object *m_inspector;
-#endif
-
-#ifdef __WXGTK__
-	WebKitWebView* m_webView;
 #endif
 
 #ifdef __WXWIN__

@@ -79,8 +79,14 @@ void App::InitRuby(){
   wxString rubylib_path  = wxPathname::Join(lib_path, "rubylib");
   
   wxString version  = "1.9.1";
-  // TODO - osx specific
+  
+#ifdef __WXOSX_COCOA__
   wxString platform = "i386-darwin10.2.0";
+#endif
+
+#ifdef __WXGTK__
+  wxString platform = "i686-linux";
+#endif
     
   AddLoadPath(wxPathname::Join(rubylib_path, version));                          // RUBY_LIB
   AddLoadPath(wxPathname::Join(rubylib_path, version, platform));                // RUBY_ARCHLIB
