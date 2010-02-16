@@ -34,6 +34,7 @@ end
 
 # Static libs
 libs << "`wx-config --libs`"
+libs << RbConfig::CONFIG['LDFLAGS']
 libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
 libs << "-lrice"
