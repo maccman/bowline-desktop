@@ -32,16 +32,20 @@ wxString wxStringFromJSValueRef(JSContextRef context, JSValueRef stringRef)
 }
 
 JSValueRef scriptDelegate(JSContextRef ctx, JSObjectRef func, JSObjectRef self, size_t argc, const JSValueRef argv[], JSValueRef* exception)
-{
+{  
   if (argc < 1)
   {
-      *exception = JSValueMakeNumber(ctx, 1);
-      return NULL;
+    *exception = JSValueMakeNumber(ctx, 1);
+    return NULL;
   }
   
-  wxString data = wxStringFromJSValueRef(ctx ,argv[0]);
+  wxString data = wxStringFromJSValueRef(ctx, argv[0]);
   
-  BowlineWebKit* bowlineWebKit = (BowlineWebKit*) JSObjectGetPrivate(self);
+  BowlineWebKit* bowlineWebKit = reinterpret_cast<BowlineWebKit*>(JSObjectGetPrivate(self));
+  if( !bowlineWebKit ) {
+    *exception = JSValueMakeNumber(ctx, 1);
+    return NULL;
+  }
   
   wxWebKitScriptEvent scriptEvent(bowlineWebKit);
   scriptEvent.SetData( data );
@@ -52,6 +56,11 @@ JSValueRef scriptDelegate(JSContextRef ctx, JSObjectRef func, JSObjectRef self, 
   return jsUndefined;
 }
 
+static JSStaticFunction Base_staticFunctions[] = {
+    { "call", scriptDelegate, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { 0, 0, 0 }
+};
+
 static void WindowObjectClearedCallback(
 	WebKitWebView* webView,
 	WebKitWebFrame* frame,
@@ -59,17 +68,21 @@ static void WindowObjectClearedCallback(
 	JSObjectRef window,
 	gpointer data)
 {
+  JSClassDefinition definition = kJSClassDefinitionEmpty;
+  definition.staticFunctions = Base_staticFunctions;
+  
+  JSClassRef objClass = JSClassCreate(&definition);
+  JSObjectMake(context, NULL, data);
+  
   JSStringRef objName = JSStringCreateWithUTF8CString("_app");
-  JSObjectRef obj     = JSObjectMake(context, NULL, NULL);
+  JSObjectRef obj     = JSObjectMake(context, objClass, data);
   JSObjectSetProperty(context, window, objName, obj, kJSPropertyAttributeNone, NULL);
   JSStringRelease(objName);
-  
-  JSObjectSetPrivate(obj, data);
-  
-  JSStringRef funcName  = JSStringCreateWithUTF8CString("call");
-  JSObjectRef func = JSObjectMakeFunctionWithCallback(context, funcName, scriptDelegate);
-  JSObjectSetProperty(context, obj, funcName, func, kJSPropertyAttributeNone, NULL);
-  JSStringRelease(funcName);
+    
+  // JSStringRef funcName  = JSStringCreateWithUTF8CString("call");
+  // JSObjectRef func = JSObjectMakeFunctionWithCallback(context, funcName, scriptDelegate);
+  // JSObjectSetProperty(context, obj, funcName, func, kJSPropertyAttributeNone, NULL);
+  // JSStringRelease(funcName);
 }
 
 static gboolean NewWindowPolicyDecisionCallback(WebKitWebView* webView,
