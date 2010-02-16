@@ -2,7 +2,6 @@
 #define WEBKIT_H_UHFR9WO4
 
 #include <wx/window.h>
-#include <webkit/webkitwebview.h>
 
 class BowlineWebKit : public wxControl
 {

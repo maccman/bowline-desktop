@@ -200,7 +200,6 @@ wxString BowlineWebKit::RunScript(const wxString& javascript){
   else
       fprintf(stderr, "BowlineWebKit::RunScript - Unexpected return type: %s!\n", [className UTF8String]);
       resultAsString = @"";
-  // TODO - add undefined in here - so it doesn't cause error msgs
 
   resultAsWxString = wxStringWithNSString( resultAsString );
   return resultAsWxString;
