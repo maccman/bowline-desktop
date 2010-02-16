@@ -3,7 +3,7 @@
 class wxPathname
 {
 public:  
-  static wxString Join(const wxString& dir1,const wxString& dir2){
+  static wxString Join(const wxString& dir1, const wxString& dir2){
     wxFileName path(dir1, wxEmptyString, wxPATH_NATIVE);
     path.AppendDir(dir2);
     return path.GetPath();
@@ -22,5 +22,11 @@ public:
     path.AppendDir(dir3);
     path.AppendDir(dir4);
     return path.GetPath();
+  }
+  
+  static wxString Dirname(const wxString& path){
+    wxFileName dirPath(path, wxEmptyString, wxPATH_NATIVE);
+    dirPath.RemoveLastDir();
+    return dirPath.GetPath();
   }
 };

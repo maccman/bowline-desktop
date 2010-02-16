@@ -138,6 +138,8 @@ wxString App::LibPath(){
   if(wxStandardPaths::Get().GetResourcesDir() != path) { // If app is bundled
     path += "/Contents/MacOS";
   }
+#else
+  path = wxPathname::Dirname(path);
 #endif
   return wxPathname::Join(path, "libs");
 }
