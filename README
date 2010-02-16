@@ -2,12 +2,15 @@ This project integrates wxWidgets with Ruby and Bowline.
 The public API documentation is in the Bowline project:
   http://github.com/maccman/bowline
 
-* OSX only (for the moment)
-  If you feel like implementing bowline_webkit_gtk.cpp, or bowline_webkit_win.cpp go for it!
+* OSX (Cocoa) & Linux (GTK)
+  If you feel like implementing bowline_webkit_win.cpp go for it!
 * uses wxWidgets 2.9
 * uses Ruby 1.9
 * uses the Rice 1.3.0 gem (http://github.com/jameskilton/rice)
 * i386 architecture
+
+Pre-compiled binaries for OSX and Ubuntu are available, and are automatically
+distributed with the Bowline gem.
 
 We don't distribute WebKit by default with Bowline for OSX, since it's so big.
 However, if you need the latest and greatest, you can compile & distribute it yourself.
@@ -35,16 +38,21 @@ You'll need this environment variables before compiling Ruby & wxWidgets:
 
 Optional:
 
-  Building WebKit for 10.5:
+  Building WebKit for 10.5 (on Snow Leopard):
     ./WebKitTools/Scripts/build-webkit --32-bit -sdk macosx10.5 MACOSX_DEPLOYMENT_TARGET_1060=10.5 WEBKIT_SYSTEM_INTERFACE_LIBRARY_1060=WebKitSystemInterfaceLeopard
 
   Building WebKit for 10.6:
     ./WebKitTools/Scripts/build-webkit --32-bit
     
-  Then move all the WebKit frameworks (in WebKitBuild/Release) to a folder inside bowline-desktop called "libs".
-  Then run:  
-    rake libs:id
-    WEBKIT_PATH=/path/to/webkit rake libs:change
+    Then move all the WebKit frameworks (in WebKitBuild/Release) to a folder inside bowline-desktop called "libs".
+    Then run:  
+      rake libs:id
+      WEBKIT_PATH=/path/to/webkit rake libs:change
+    
+  Building WebKit on Ubuntu:
+    export CFLAGS="-O2"
+    export CXXFLAGS="-O2"
+    ./autogen.sh --enable-3D-transforms --enable-web-sockets --prefix /usr --host `dpkg-architecture -qDEB_HOST_GNU_TYPE` --build `dpkg-architecture -qDEB_BUILD_GNU_TYPE`
 
 To compile:
 $ ruby ruby2make
