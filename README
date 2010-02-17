@@ -18,6 +18,15 @@ If you go down this route, you'll find that the CSS3 3D effects don't work on OS
 with a 10.5 compiled WebKit. If you need those effects, you'll have to distribute two
 versions of your app - one for Leopard and one for Snow Leopard.
 
+Rice:
+ You'll need to use the github version since it's got a few fixes we need:
+  git clone git://github.com/jameskilton/rice.git
+
+ There's an issue at the moment, building on Rice in 32 bit mode using Snow Leopard.
+ The gem doesn't build with the right architecture. To solves this edit extconf.rb to 
+ always use i386, and move all the test and example makefiles from the project.
+  
+
 You'll need this environment variables before compiling Ruby & wxWidgets:
 
   arch_flags="-arch i386 -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"

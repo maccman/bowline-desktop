@@ -1,12 +1,18 @@
-Create Windowing API (with Rice):
-  Add Menus
-  Context Menu?
-  
-Fix onMouseOver events.
 Get the menu events working.
+
+OSX:
+  Fix onMouseOver events.
+  
+GTK:
+  Remove context window.
+  Add inspector support.
 
 Remove TK from Ruby
 
 Implement Chromeless windows
 
 Catch errors when script callback is executed.
+
+Create Windowing API (with Rice):
+  Add Menus
+  Context Menu?
