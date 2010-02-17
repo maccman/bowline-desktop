@@ -8,6 +8,7 @@ require "rbconfig"
 gem "rice", ">= 1.3.0"
 
 rice_gem = Gem.cache.find_name("rice").first
+raise "Can't find rice gem" unless rice_gem
 
 includes = []
 includes << RbConfig::CONFIG['rubyhdrdir']
@@ -39,8 +40,10 @@ libs << RbConfig::CONFIG['LIBRUBYARG_STATIC']
 libs << "-L" + File.join(rice_gem.full_gem_path, *%w{ruby lib lib})
 libs << "-lrice"
 
+libs << "-Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
+
 debug_flags      = "-g -Wall -Wcast-align -Wmissing-noreturn -Wundef"
-standard_flags   = "-fmessage-length=0 -Wno-trigraphs -Wl,-rpath,@loader_path/libs -Wl,-rpath,@loader_path/../Frameworks  -Wl,-rpath,@loader_path/../Libraries"
+standard_flags   = "-fmessage-length=0 -Wno-trigraphs"
 
 if osx?
   standard_flags += " -arch i386 -fpascal-strings -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
