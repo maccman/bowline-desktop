@@ -41,7 +41,7 @@ You'll need this environment variables before compiling Ruby & wxWidgets:
     ./configure --with-static-linked-ext --program-suffix=19 --prefix=/usr/local 
 
   wxWidgets configuration:
-    ./configure --disable-webkit --disable-shared --with-osx_cocoa --enable-debug_gdb --disable-optimise
+    ./configure --disable-webkit --disable-shared --with-osx_cocoa
     
   wxWidgets needs patching on Snow Leopard - see http://trac.wxwidgets.org/ticket/11183
 
