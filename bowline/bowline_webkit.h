@@ -57,6 +57,10 @@ protected:
   virtual void DoApplyWidgetStyle(GtkRcStyle *style);
   //virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
 #endif
+
+#ifdef __WXOSX_COCOA__
+  virtual void OnMouseMove(wxMouseEvent &event);
+#endif
     
 private:
   

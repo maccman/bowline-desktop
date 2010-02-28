@@ -87,7 +87,7 @@ bool BowlineWebKit::Create(wxWindow *parent,
   m_webView = [[WebView alloc] initWithFrame:rect frameName:@"webkitFrame" groupName:@"webkitGroup"];
 
   m_peer = new wxWidgetCocoaImpl(this, m_webView);
-    
+
   MacPostControlCreate(pos, size);
   
   [m_webView setHidden:false];
@@ -130,6 +130,9 @@ bool BowlineWebKit::Create(wxWindow *parent,
   // [m_webView registerURLSchemeAsLocal:@"app"];
   // [m_webView setBackgroundColor:[NSColor clearColor]];
   
+  // Fix mouse move events
+  wxTheApp->Connect(wxID_ANY, wxEVT_MOTION, wxMouseEventHandler(BowlineWebKit::OnMouseMove), NULL, this);
+  
   return true;
 }
 
@@ -147,6 +150,18 @@ BowlineWebKit::~BowlineWebKit() {
 
   if (m_inspector)
     [m_inspector release];
+}
+
+void BowlineWebKit::OnMouseMove(wxMouseEvent& WXUNUSED(evt)){
+  // Apple's WebKit don't listen to mouseMoved events in the normal
+  // fashion, but rather passes them through NSNotificationCenter.
+  // However, this isn't working for some reason, I presume
+  // 'WKSetNSWindowShouldPostEventNotifications' is meant to automatically
+  // send NSMouseMovedNotification notifications on mouseMoved. 
+  // However, since I can't see the source, we will have to generate the event.
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:@"NSMouseMovedNotification" object:nil
+      userInfo:[NSDictionary dictionaryWithObject:[NSApp currentEvent] forKey:@"NSEvent"]];
 }
 
 void BowlineWebKit::SetPageSource(const wxString& source, const wxString& baseUrl){
