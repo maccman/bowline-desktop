@@ -40,14 +40,14 @@ bool App::OnInit()
 
   InitRuby();
   InitBowline();
-  
+
   int error;
   rb_load_protect(rb_str_new2("script/init"), Qfalse, &error);
   if(error){
     RubyUtils::LogError();
     throw "Ruby Error";
   }
-      
+  
   Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
   tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
   tickTimer.Start(50);
@@ -71,7 +71,11 @@ int App::OnExit()
 }
 
 void App::InitRuby(){
+  int argc = App::argc;
+  char** argv = App::argv;
+  
   RUBY_INIT_STACK;
+  ruby_sysinit(&argc, &argv);
   ruby_init();
   ruby_script("bowline");
         

@@ -1,7 +1,4 @@
 Get the menu events working.
-
-OSX:
-  Fix onMouseOver events.
   
 GTK:
   Remove context window.

@@ -3,6 +3,10 @@
 
 using namespace Rice;
 
+wxString bowline_path_exe(){
+  return wxStandardPaths::Get().GetExecutablePath();
+}
+
 wxString bowline_path_documents(){
   return wxStandardPaths::Get().GetDocumentsDir();
 }
@@ -25,6 +29,7 @@ void Init_Bowline_Path(){
   
   Module rb_mBowlineApp =
     define_module_under(rb_mBowlineDesktop, "Path")
+    .define_module_function("exe",        &bowline_path_exe)
     .define_module_function("documents",  &bowline_path_documents)
     .define_module_function("data",       &bowline_path_data)
     .define_module_function("user_data",  &bowline_path_user_data)
