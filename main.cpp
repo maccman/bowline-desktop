@@ -10,6 +10,7 @@
 #endif
 
 #include "wx_pathname.cpp"
+#include "wx_stdpaths_cf.cpp"
 #include "ruby_utils.cpp"
 #include "bowline/bowline.cpp"
 
@@ -73,9 +74,9 @@ int App::OnExit()
 void App::InitRuby(){
   int argc = App::argc;
   char** argv = App::argv;
-  
-  RUBY_INIT_STACK;
+
   ruby_sysinit(&argc, &argv);
+  RUBY_INIT_STACK;
   ruby_init();
   ruby_script("bowline");
         
@@ -136,14 +137,11 @@ wxString App::ResourcePath(){
 }
 
 wxString App::LibPath(){
-  wxString path = wxStandardPaths::Get().GetExecutablePath();
 #ifdef __WXMAC__
-  // Because GetExecutablePath uese CFBundleCopyBundleURL not CFBundleCopyExecutableURL
-  if(wxStandardPaths::Get().GetResourcesDir() != path) { // If app is bundled
-    path += "/Contents/MacOS";
-  }
+  wxString path = wxStandardPathsCFExt().GetRawExecutablePath();
 #else
-  path = wxPathname::Dirname(path);
+  wxString path = wxStandardPaths::Get().GetExecutablePath();
 #endif
+  path = wxPathname::Dirname(path);
   return wxPathname::Join(path, "libs");
 }
