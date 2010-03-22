@@ -164,7 +164,7 @@ public:
     const wxString default_path = wxEmptyString,
     const wxString default_filename = wxEmptyString,
     const wxString default_extension = wxEmptyString,
-    const wxString wildcard = "*.*",
+    const wxString wildcard = ".",
     int flags = 0
   ){
     FREED_RETURN_OBJ(wxEmptyString);
@@ -174,9 +174,9 @@ public:
       default_filename,
       default_extension,
       wildcard,
-      flags,
-      frame
+      flags
     );
+    
     return path;
   }
   
@@ -320,7 +320,7 @@ void Init_Bowline_Control(){
           Arg("default_path")       = (wxString)wxEmptyString,
           Arg("default_filename")   = (wxString)wxEmptyString,
           Arg("default_extension")  = (wxString)wxEmptyString,
-          Arg("wildcard")           = (wxString)"*.*",
+          Arg("wildcard")           = (wxString)".",
           Arg("flags")              = 0
         )
       )
