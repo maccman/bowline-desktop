@@ -42,6 +42,6 @@ void Init_Bowline_Path(){
     .define_module_function("raw_exe",    &bowline_path_raw_exe)
     .define_module_function("documents",  &bowline_path_documents)
     .define_module_function("data",       &bowline_path_data)
-    .define_module_function("user_data",  &bowline_path_user_data)
+    .define_module_function("_user_data", &bowline_path_user_data)
     .define_module_function("temp",       &bowline_path_temp);
 }
