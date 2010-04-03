@@ -192,7 +192,7 @@ public:
   
   bool IsShown(){
     FREED_RETURN_OBJ(false);
-    frame->IsShown();
+    return frame->IsShown();
   }
   
   void Show(){
@@ -258,6 +258,11 @@ public:
   void ShowInspector(bool console = false){
     FREED_RETURN;
     webkit->ShowInspector(console);
+  }
+  
+  bool HasFocus(){
+    FREED_RETURN_OBJ(false);
+    return frame->HasFocus(); 
   }
 
 protected:
@@ -325,6 +330,7 @@ void Init_Bowline_Control(){
         )
       )
       .define_method("shown?",    &BowlineControl::IsShown)
+      .define_method("focus?",    &BowlineControl::HasFocus)
       .const_set("FD_OPEN",             to_ruby((int)wxFD_OPEN))
       .const_set("FD_SAVE",             to_ruby((int)wxFD_SAVE))
       .const_set("FD_OVERWRITE_PROMPT", to_ruby((int)wxFD_OVERWRITE_PROMPT))
