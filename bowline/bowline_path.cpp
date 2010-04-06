@@ -1,6 +1,8 @@
 #include "bowline.h"
 #include <wx/stdpaths.h>
+#ifdef __WXMAC__
 #include "wx_stdpaths_cf.cpp"
+#endif
 
 using namespace Rice;
 
