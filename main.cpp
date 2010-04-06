@@ -10,7 +10,9 @@
 #endif
 
 #include "wx_pathname.cpp"
+#ifdef __WXMAC__
 #include "wx_stdpaths_cf.cpp"
+#endif
 #include "ruby_utils.cpp"
 #include "bowline/bowline.cpp"
 
