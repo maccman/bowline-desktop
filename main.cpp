@@ -97,9 +97,9 @@ void App::InitRuby(){
     
   AddLoadPath(wxPathname::Join(rubylib_path, version));                          // RUBY_LIB
   AddLoadPath(wxPathname::Join(rubylib_path, version, platform));                // RUBY_ARCHLIB
-  AddLoadPath(wxPathname::Join(rubylib_path, "site_path"));                      // RUBY_SITE_LIB
-  AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version));             // RUBY_SITE_LIB2
-  AddLoadPath(wxPathname::Join(rubylib_path, "site_path", version, platform));   // RUBY_SITE_ARCHLIB
+  AddLoadPath(wxPathname::Join(rubylib_path, "site_ruby"));                      // RUBY_SITE_LIB
+  AddLoadPath(wxPathname::Join(rubylib_path, "site_ruby", version));             // RUBY_SITE_LIB2
+  AddLoadPath(wxPathname::Join(rubylib_path, "site_ruby", version, platform));   // RUBY_SITE_ARCHLIB
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby"));                    // RUBY_VENDOR_LIB
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version));           // RUBY_VENDOR_LIB2
   AddLoadPath(wxPathname::Join(rubylib_path, "vendor_ruby", version, platform)); // RUBY_VENDOR_ARCHLIB
