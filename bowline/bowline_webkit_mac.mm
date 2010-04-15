@@ -238,19 +238,19 @@ void BowlineWebKit::ShowInspector(bool console){
 }
 
 void BowlineWebKit::Cut(){
-  [m_webView cut];
+  [m_webView cut:m_webView];
 }
 
 void BowlineWebKit::Copy(){
-  [m_webView copy];
+  [m_webView copy:m_webView];
 }
 
 void BowlineWebKit::Paste(){
-  [m_webView paste];
+  [m_webView paste:m_webView];
 }
 
 void BowlineWebKit::Reload(){
-  [m_webView reload];
+  [m_webView reload:m_webView];
 }
 
 @implementation BowlineFrameLoadMonitor

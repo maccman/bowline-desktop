@@ -49,6 +49,13 @@ public:
     
     webkit = new BowlineWebKit(frame, wxID_ANY);
     webkit->Connect(wxID_ANY, wxEVT_WEBKIT_SCRIPT, wxWebKitScriptEventHandler(BowlineControl::OnScript), NULL, this);
+    
+    frame->Connect( wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnExit), NULL, this);
+    frame->Connect( wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnCut), NULL, this);
+    frame->Connect( wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnCopy), NULL, this);
+    frame->Connect( wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnPaste), NULL, this);
+    frame->Connect( ID_RELOAD,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnReload), NULL, this);
+    frame->Connect( ID_SHOW_INSPECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BowlineControl::OnShowInspector), NULL, this);    
 
     LoadFile(path);
   }
@@ -266,25 +273,12 @@ public:
   }
 
 protected:
-  DECLARE_DYNAMIC_CLASS(BowlineControl)
-  DECLARE_EVENT_TABLE()
   
   wxWeakRef<wxFrame> frame;
   wxWeakRef<BowlineWebKit> webkit;
   wxMenuBar *menuBar;
   Object scriptCallback;
 };
-
-IMPLEMENT_DYNAMIC_CLASS(BowlineControl, wxEvtHandler)
-
-BEGIN_EVENT_TABLE(BowlineControl, wxEvtHandler)
-	EVT_MENU(wxID_EXIT,  BowlineControl::OnExit)
-	EVT_MENU(wxID_CUT,   BowlineControl::OnCut)
-	EVT_MENU(wxID_COPY,  BowlineControl::OnCopy)
-	EVT_MENU(wxID_PASTE, BowlineControl::OnPaste)
-	EVT_MENU(ID_RELOAD,  BowlineControl::OnReload)
-	EVT_MENU(ID_SHOW_INSPECTOR, BowlineControl::OnShowInspector)
-END_EVENT_TABLE()
 
 void Init_Bowline_Control(){
   Class rb_cBowlineControl= 
