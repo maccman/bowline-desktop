@@ -1,5 +1,3 @@
-Get the menu events working.
-  
 GTK:
   Remove context window.
   Add inspector support.
