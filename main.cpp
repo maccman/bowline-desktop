@@ -108,6 +108,14 @@ void App::InitRuby(){
   AddLoadPath(resource_path);
   
   Init_prelude();
+  
+  // Important to define Gem after Init_prelude 
+  // since RubyGems excepts to undefine it later
+  rb_eval_string(
+    "module Kernel\n"
+    "  def gem; end unless defined?(gem)\n"
+    "end\n"
+  );
 }
 
 void App::AddLoadPath(const wxString& path){
