@@ -4,6 +4,7 @@
 #include <wx/timer.h>
 #include <iostream>
 #include <rice/detail/ruby.hpp>
+#include <ruby/encoding.h>
 
 #ifdef __WXMAC__
 #include <ApplicationServices/ApplicationServices.h>
@@ -17,7 +18,23 @@
 #include "bowline/bowline.cpp"
 
 extern "C" {
+  static void
+  ruby_init_encoding(){
+    rb_encoding *lenc;
+    lenc = rb_locale_encoding();
+    (void)rb_filesystem_encoding();
+    rb_enc_set_default_external(rb_enc_from_encoding(lenc));
+  }
+  
   void Init_prelude(void);
+  
+  static void
+  ruby_init_gems()
+  {
+      rb_define_module("Gem");
+      Init_prelude();
+      rb_const_remove(rb_cObject, rb_intern_const("TMP_RUBY_PREFIX"));
+  }
 }
 
 class App : public wxApp
@@ -61,6 +78,9 @@ bool App::OnInit()
   GetCurrentProcess(&PSN);
   TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
   SetFrontProcess(&PSN);
+  
+  // Don't exit when top frame is closed
+  // wxApp::SetExitOnFrameDelete(false);
   #endif
   
   return true;
@@ -69,6 +89,8 @@ bool App::OnInit()
 int App::OnExit()
 {
   tickTimer.Stop();
+  // Nasty hack to stop ruby_finalize crashing
+  rb_eval_string_protect("sleep(0.5)", NULL);
   ruby_finalize();
   return 0;
 }
@@ -80,6 +102,8 @@ void App::InitRuby(){
   ruby_sysinit(&argc, &argv);
   RUBY_INIT_STACK;
   ruby_init();
+  ruby_init_loadpath();
+  ruby_init_encoding();
   ruby_script("bowline");
         
   wxString lib_path      = this->LibPath();
@@ -107,15 +131,7 @@ void App::InitRuby(){
   wxString resource_path = this->ResourcePath();
   AddLoadPath(resource_path);
   
-  Init_prelude();
-  
-  // Important to define Gem after Init_prelude 
-  // since RubyGems excepts to undefine it later
-  rb_eval_string(
-    "module Kernel\n"
-    "  def gem; end unless defined?(gem)\n"
-    "end\n"
-  );
+  ruby_init_gems();
 }
 
 void App::AddLoadPath(const wxString& path){
@@ -127,9 +143,9 @@ void App::Tick(wxTimerEvent& WXUNUSED(evt)){
 }
 
 void App::Idle(wxIdleEvent& WXUNUSED(evt)) {
-  // // This absolutely sucks. Needed to get threads running.
-  // // There is a Ruby API to do this properly (see RubyGVL),
-  // // but it keeps segfaulting on me
+  // This absolutely sucks. Needed to get threads running.
+  // There is a Ruby API to do this properly (see RubyGVL),
+  // but it keeps segfaulting on me
   rb_eval_string_protect("sleep(0.05)", NULL);
   rb_eval_string_protect("Bowline::Desktop.idle", NULL);
 }
