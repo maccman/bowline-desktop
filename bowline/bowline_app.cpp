@@ -4,7 +4,10 @@
 using namespace Rice;
 
 void bowline_app_exit(){
-  wxTheApp->GetTopWindow()->Close(false);
+  wxWindow *window = wxTheApp->GetTopWindow();
+  if (window) {
+    window->Close(false);
+  }
 }
 
 void bowline_app_busy(bool flag = true){
@@ -15,6 +18,10 @@ void bowline_app_busy(bool flag = true){
   }
 }
 
+bool bowline_app_is_active(){
+  return wxTheApp->IsActive();
+}
+
 void Init_Bowline_App(){
   Module rb_mBowline        = define_module("Bowline");
   Module rb_mBowlineDesktop = define_module_under(rb_mBowline, "Desktop");
@@ -22,5 +29,6 @@ void Init_Bowline_App(){
   Module rb_mBowlineApp =
     define_module_under(rb_mBowlineDesktop, "App")
     .define_module_function("exit", &bowline_app_exit)
-    .define_module_function("busy", &bowline_app_busy, Arg("flag") = true);
+    .define_module_function("busy", &bowline_app_busy, Arg("flag") = true)
+    .define_module_function("active?", &bowline_app_is_active);
 }
