@@ -68,8 +68,8 @@ bool App::OnInit()
     throw "Ruby Error";
   }
   
-  Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle));
-  tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick));
+  Connect(wxID_ANY, wxEVT_IDLE, wxIdleEventHandler(App::Idle), NULL, this);
+  tickTimer.Connect(tickTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(App::Tick), NULL, this);
   tickTimer.Start(50);
   
   #ifdef __WXMAC__
@@ -89,9 +89,7 @@ bool App::OnInit()
 int App::OnExit()
 {
   tickTimer.Stop();
-  // Nasty hack to stop ruby_finalize crashing
-  rb_eval_string_protect("sleep(0.5)", NULL);
-  ruby_finalize();
+  rb_exit(0);
   return 0;
 }
 
