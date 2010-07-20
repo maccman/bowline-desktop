@@ -50,8 +50,6 @@ public:
   void Paste();
   void Reload();
     
-    
-protected:
 #ifdef __WXGTK__
   virtual wxSize DoGetBestSize() const;
   virtual void DoApplyWidgetStyle(GtkRcStyle *style);
@@ -61,8 +59,6 @@ protected:
 #ifdef __WXOSX_COCOA__
   virtual void OnMouseMove(wxMouseEvent &event);
 #endif
-    
-private:
   
   bool developer;
   

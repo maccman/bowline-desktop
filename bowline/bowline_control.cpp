@@ -19,7 +19,7 @@ using namespace Rice;
 class BowlineControl : public wxEvtHandler
 {
 public:
-  BowlineControl () {
+  BowlineControl() {
     BowlineControl(NULL);
   }
   
@@ -252,9 +252,9 @@ public:
     frame->SetMaxSize(wxSize(x, y));
   }
   
-  void SetSize(int height, int width){
+  void SetSize(int width, int height){
     FREED_RETURN;
-    frame->SetSize(-1, -1, height, width, wxSIZE_USE_EXISTING);
+    frame->SetSize(-1, -1, width, height, wxSIZE_USE_EXISTING);
   }
   
   void SetPosition(int x, int y){
@@ -271,8 +271,6 @@ public:
     FREED_RETURN_OBJ(false);
     return frame->HasFocus(); 
   }
-
-protected:
   
   wxWeakRef<wxFrame> frame;
   wxWeakRef<BowlineWebKit> webkit;

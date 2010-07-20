@@ -253,6 +253,31 @@ void BowlineWebKit::Reload(){
   [m_webView reload:m_webView];
 }
 
+// Simple window for poups
+
+class SimpleWindow : public wxFrame
+{
+public:
+  SimpleWindow() : wxFrame(
+    wxTheApp->GetTopWindow(), 
+    wxID_ANY,
+    wxEmptyString,
+    wxDefaultPosition,
+    wxDefaultSize
+  ) {
+    webkit = new BowlineWebKit(this, wxID_ANY);
+  };
+  virtual ~SimpleWindow() {};
+  
+  void LoadURL(wxString url){
+    if (webkit == NULL) return;
+    if(url != wxEmptyString)
+      webkit->LoadURL(url);    
+  }
+  
+  wxWeakRef<BowlineWebKit> webkit;
+};
+
 @implementation BowlineFrameLoadMonitor
 
 - initWithWxWindow: (BowlineWebKit*)inWindow
@@ -332,7 +357,7 @@ void BowlineWebKit::Reload(){
 
 - (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
 {
-  [listener ignore];
+  [listener use];
 }
 @end
 
@@ -406,6 +431,39 @@ void BowlineWebKit::Reload(){
     return wxNSStringWithWxString((wxString) dialog.GetValue());
   }
   return nil;
+}
+
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features
+{
+  SimpleWindow* window = new SimpleWindow;
+  
+  NSString* url = [[request URL] absoluteString];
+  window->LoadURL(wxStringWithNSString(url));
+  
+  int x = [[features objectForKey:@"x"] intValue];
+  int y = [[features objectForKey:@"y"] intValue];
+  int width = [[features objectForKey:@"width"] intValue];
+  int height = [[features objectForKey:@"height"] intValue];
+  
+  window->SetSize(x, y, width, height, wxSIZE_USE_EXISTING);
+  window->Show();
+
+  return window->webkit->m_webView;
+}
+
+- (void)webViewShow:(WebView *)sender
+{
+  webKitWindow->Show();
+}
+
+- (void)webViewClose:(WebView *)wv 
+{
+  webKitWindow->Close(false);
+}
+
+- (void)webViewFocus:(WebView *)wv 
+{
+  webKitWindow->SetFocus();
 }
 
 @end
